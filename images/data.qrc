@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/board">
+        <file>board.png</file>
+        <file>board.avif</file>
+    </qresource>
+</RCC>
