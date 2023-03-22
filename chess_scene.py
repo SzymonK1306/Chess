@@ -7,6 +7,7 @@ from knight import Knight
 from rook import Rook
 from queen import Queen
 from king import King
+from field import Field
 
 
 # main class scene
@@ -17,9 +18,12 @@ class Chess_Scene(QGraphicsScene):
 
     def init_board(self):
         # board generation
-        self.board = QGraphicsPixmapItem()
-        self.board.setPixmap(QPixmap(":/board/board.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        self.addItem(self.board)
+        # self.board = QGraphicsPixmapItem()
+        # self.board.setPixmap(QPixmap(":/board/board.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        # self.addItem(self.board)
+
+        self.board = [Field(i, j) for i in range(8) for j in range(8)]
+        [self.addItem(single_field) for single_field in self.board]
 
         # white pieces
         self.white_pawns = [Pawn('w', 100 * i, 600) for i in range(8)]
@@ -59,8 +63,8 @@ class Chess_Scene(QGraphicsScene):
         board_menu = QMenu("Board", menu)
         pieces_menu = QMenu("Pieces", menu)
 
-        change_board1_action = QAction("Wooden board", board_menu)
-        change_board2_action = QAction("Classic board", board_menu)
+        change_board1_action = QAction("Brown-white", board_menu)
+        change_board2_action = QAction("Blue-white", board_menu)
         board_menu.addAction(change_board1_action)
         board_menu.addAction(change_board2_action)
 
@@ -75,9 +79,11 @@ class Chess_Scene(QGraphicsScene):
         action = menu.exec(event.screenPos())
 
         if action == change_board1_action:
-            self.board.setPixmap(QPixmap(":/board/board.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            # self.board.setPixmap(QPixmap(":/board/board.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            [single_field.black_fields() for single_field in self.board]
         elif action == change_board2_action:
-            self.board.setPixmap(QPixmap("images/board2_new.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            # self.board.setPixmap(QPixmap("images/board2_new.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            [single_field.blue_fields() for single_field in self.board]
         elif action == change_pieces1_action:
             self.black_king.setPixmap(QPixmap("images/black_king.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             [piece.setPixmap(QPixmap("images/black_pawn.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_pawns]
