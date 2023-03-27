@@ -42,19 +42,19 @@ class Chess_Scene(QGraphicsScene):
         self.black_king = King('b', 400, 0)
 
         # add to scene
-        [self.addItem(piece) for piece in self.white_pawns]
-        [self.addItem(piece) for piece in self.white_bishops]
-        [self.addItem(piece) for piece in self.white_knights]
-        [self.addItem(piece) for piece in self.white_rooks]
-        [self.addItem(piece) for piece in self.white_queens]
-        self.addItem(self.white_king)
-
         [self.addItem(piece) for piece in self.black_pawns]
         [self.addItem(piece) for piece in self.black_bishops]
         [self.addItem(piece) for piece in self.black_knights]
         [self.addItem(piece) for piece in self.black_rooks]
         [self.addItem(piece) for piece in self.black_queens]
         self.addItem(self.black_king)
+
+        [self.addItem(piece) for piece in self.white_pawns]
+        [self.addItem(piece) for piece in self.white_bishops]
+        [self.addItem(piece) for piece in self.white_knights]
+        [self.addItem(piece) for piece in self.white_rooks]
+        [self.addItem(piece) for piece in self.white_queens]
+        self.addItem(self.white_king)
 
     def contextMenuEvent(self, event):
         menu = QMenu()
@@ -98,3 +98,10 @@ class Chess_Scene(QGraphicsScene):
             [piece.setPixmap(QPixmap("images/red_knight.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_knights]
             [piece.setPixmap(QPixmap("images/red_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
             [piece.setPixmap(QPixmap("images/red_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
+
+    def pieces_positions(self):
+        for scene_item in self.items():
+            x = scene_item.positionX
+            y = scene_item.positionY
+            color = scene_item.color
+
