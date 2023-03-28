@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QLabel, QGraph
 from PyQt5.QtCore import QFile, QObject, Qt
 from PyQt5 import QtWidgets, uic
 from PySide6.QtUiTools import QUiLoader
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from chess_scene import Chess_Scene
 import data_rc
 
@@ -19,6 +19,12 @@ class Form(QtWidgets.QMainWindow):
         self.main_graphic = self.findChild(QGraphicsView, 'main_graphic')
         self.title_label = self.findChild(QLabel, 'title_label')
 
+        # create the icon object
+        icon = QIcon("images/red_king.png")
+
+        # set the application icon
+        QApplication.setWindowIcon(icon)
+
         # scene creation
         self.scene = Chess_Scene()
 
@@ -26,10 +32,6 @@ class Form(QtWidgets.QMainWindow):
         self.scene.init_board()
 
         self.main_graphic.setScene(self.scene)
-        # self.scene.textChanged.connect(self.updateLabelText)
-
-        # def updateLabelText(self, text):
-        #     self.label.active_player_information(text)
 
 
 if __name__ == '__main__':

@@ -107,10 +107,8 @@ class Piece(QGraphicsPixmapItem):
                     print(self.drag_start_position)
                     if self.color == 'white':
                         self.scene().activePlayer = 'black'
-                        # self.scene().active_player_information('Black turn')
                     else:
                         self.scene().activePlayer = 'white'
-                        # self.scene().active_player_information('Black turn')
                     print(self.scene().activePlayer)
             super().mouseReleaseEvent(event)
 

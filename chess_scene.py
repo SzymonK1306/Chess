@@ -1,13 +1,8 @@
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QMenu, QAction
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from piece import Piece
-from pawn import Pawn
-from bishop import Bishop
-from knight import Knight
-from rook import Rook
-from queen import Queen
-from king import King
+from logic import ChessLogic
 from field import Field
 import numpy as np
 
@@ -67,6 +62,7 @@ class Chess_Scene(QGraphicsScene):
 
         self.napis = 'pisze'
         self.activePlayer = 'white'
+        self.chess_board = ChessLogic()
 
     def contextMenuEvent(self, event):
         menu = QMenu()

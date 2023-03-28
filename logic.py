@@ -1,6 +1,7 @@
 import numpy as np
 
-class Chess_Logic():
+
+class ChessLogic:
     def __init__(self):
         # creating array to logic
         self.board_logic_array = np.array([['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
