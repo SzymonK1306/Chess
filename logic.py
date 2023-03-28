@@ -15,8 +15,11 @@ class ChessLogic:
 
         print(self.board_logic_array)
 
-    def move(self):
-        pass
+    def move(self, startX, startY, stopX, stopY):
+        piece = self.board_logic_array[startX, startY]
+        self.board_logic_array[startX, startY] = '.'
+        self.board_logic_array[stopX, stopY] = piece
+        print(self.board_logic_array)
 
     def get_pawn_moves(self, row, col):
 

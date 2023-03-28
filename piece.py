@@ -113,17 +113,28 @@ class Piece(QGraphicsPixmapItem):
                 drop_y = int(drop_position.y() / 100)
                 new_pos = QPointF(drop_x * 100, drop_y * 100)
 
+                # check move is correct
                 correct_flag = False
+                for i in range(len(self.possible_moves)):
+                    coordinates = self.possible_moves[i]
+                    if drop_x == coordinates[1] and drop_y == coordinates[0]:
+                        correct_flag = True
 
-                self.setPos(new_pos)
-                # checking if the move was made
-                if self.drag_start_position != new_pos:
-                    print(self.drag_start_position)
-                    if self.color == 'white':
-                        self.scene().activePlayer = 'black'
-                    else:
-                        self.scene().activePlayer = 'white'
-                    print(self.scene().activePlayer)
+                if correct_flag:
+                    self.setPos(new_pos)
+                    # checking if the move was made
+                    if self.drag_start_position != new_pos:
+                        # move in np.array
+                        self.scene().chess_board.move(int(self.drag_start_position.y()/100), int(self.drag_start_position.x()/100),
+                                                       int(new_pos.y()/100), int(new_pos.x()/100))
+                        # change sites
+                        if self.color == 'white':
+                            self.scene().activePlayer = 'black'
+                        else:
+                            self.scene().activePlayer = 'white'
+                        print(self.scene().activePlayer)
+                else:
+                    self.setPos(self.drag_start_position)
                 self.possible_moves.clear()
             super().mouseReleaseEvent(event)
 
