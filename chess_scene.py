@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QMenu, QAction
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
+from piece import Piece
 from pawn import Pawn
 from bishop import Bishop
 from knight import Knight
@@ -8,6 +9,7 @@ from rook import Rook
 from queen import Queen
 from king import King
 from field import Field
+import numpy as np
 
 
 # main class scene
@@ -26,20 +28,27 @@ class Chess_Scene(QGraphicsScene):
         [self.addItem(single_field) for single_field in self.board]
 
         # white pieces
-        self.white_pawns = [Pawn('w', 100 * i, 600) for i in range(8)]
-        self.white_bishops = [Bishop('w', 200, 700), Bishop('w', 500, 700)]
-        self.white_knights = [Knight('w', 100, 700), Knight('w', 600, 700)]
-        self.white_rooks = [Rook('w', 0, 700), Rook('w', 700, 700)]
-        self.white_queens = [Queen('w', 300, 700)]
-        self.white_king = King('w', 400, 700)
+        self.white_pawns = [Piece('w', 'Pawn', 100 * i, 600) for i in range(8)]
+        self.white_bishops = [Piece('w', 'Bishop', 200, 700), Piece('w', 'Bishop', 500, 700)]
+        self.white_knights = [Piece('w', 'Knight', 100, 700), Piece('w', 'Knight', 600, 700)]
+        self.white_rooks = [Piece('w', 'Rook', 0, 700), Piece('w', 'Rook', 700, 700)]
+        self.white_queens = [Piece('w', 'Queen',  300, 700)]
+        self.white_king = Piece('w', 'King', 400, 700)
+        # print(type(self.white_king))
 
         # black pieces
-        self.black_pawns = [Pawn('b', 100 * i, 100) for i in range(8)]
-        self.black_bishops = [Bishop('b', 200, 0), Bishop('b', 500, 0)]
-        self.black_knights = [Knight('b', 100, 0), Knight('b', 600, 0)]
-        self.black_rooks = [Rook('b', 0, 0), Rook('b', 700, 0)]
-        self.black_queens = [Queen('b', 300, 0)]
-        self.black_king = King('b', 400, 0)
+        self.black_pawns = [Piece('b', 'Pawn', 100 * i, 100) for i in range(8)]
+        self.black_bishops = [Piece('b', 'Bishop', 200, 0), Piece('b', 'Bishop', 500, 0)]
+        self.black_knights = [Piece('b', 'Knight', 100, 0), Piece('b', 'Knight', 600, 0)]
+        self.black_rooks = [Piece('b', 'Rook', 0, 0), Piece('b', 'Rook', 700, 0)]
+        self.black_queens = [Piece('b', 'Queen',  300, 0)]
+        self.black_king = Piece('b', 'King', 400, 0)
+        # self.black_pawns = [Pawn('b', 100 * i, 100) for i in range(8)]
+        # self.black_bishops = [Bishop('b', 200, 0), Bishop('b', 500, 0)]
+        # self.black_knights = [Knight('b', 100, 0), Knight('b', 600, 0)]
+        # self.black_rooks = [Rook('b', 0, 0), Rook('b', 700, 0)]
+        # self.black_queens = [Queen('b', 300, 0)]
+        # self.black_king = King('b', 400, 0)
 
         # add to scene
         [self.addItem(piece) for piece in self.black_pawns]
@@ -55,6 +64,8 @@ class Chess_Scene(QGraphicsScene):
         [self.addItem(piece) for piece in self.white_rooks]
         [self.addItem(piece) for piece in self.white_queens]
         self.addItem(self.white_king)
+
+        self.napis = 'pisze'
 
     def contextMenuEvent(self, event):
         menu = QMenu()
