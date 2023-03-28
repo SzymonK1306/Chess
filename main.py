@@ -26,6 +26,10 @@ class Form(QtWidgets.QMainWindow):
         self.scene.init_board()
 
         self.main_graphic.setScene(self.scene)
+        # self.scene.textChanged.connect(self.updateLabelText)
+
+        # def updateLabelText(self, text):
+        #     self.label.active_player_information(text)
 
 
 if __name__ == '__main__':
