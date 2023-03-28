@@ -11,6 +11,7 @@ class Piece(QGraphicsPixmapItem):
         self.positionX = positionX
         self.positionY = positionY
         self.type = type
+        self.possible_moves = []
 
         match type:
             case 'Pawn':
@@ -70,7 +71,14 @@ class Piece(QGraphicsPixmapItem):
                 self.setCursor(QCursor(Qt.ClosedHandCursor))
                 self.drag_start_position = event.scenePos()
                 # save start position
-                self.drag_start_position = QPointF(self.drag_start_position.x()//100 * 100, self.drag_start_position.y()//100 * 100)
+                piece_x = self.drag_start_position.x()//100
+                piece_y = self.drag_start_position.y() // 100
+                self.drag_start_position = QPointF(piece_x * 100, piece_y * 100)
+
+                # possible moves
+                self.possible_moves = self.scene().chess_board.get_pawn_moves(int(piece_y), int(piece_x))
+                print(self.possible_moves)
+                self.scene().highlight_moves(self.possible_moves)
                 super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
@@ -94,13 +102,19 @@ class Piece(QGraphicsPixmapItem):
     #     super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        if self.color == self.scene().activePlayer: # checking color
+        if self.color == self.scene().activePlayer:     # checking color
             if event.button() == Qt.LeftButton:
+                # unhighlight fields
+                self.scene().unhighlight_moves(self.possible_moves)
+
                 self.setCursor(QCursor(Qt.OpenHandCursor))
                 drop_position = event.scenePos()
                 drop_x = int(drop_position.x() / 100)
                 drop_y = int(drop_position.y() / 100)
                 new_pos = QPointF(drop_x * 100, drop_y * 100)
+
+                correct_flag = False
+
                 self.setPos(new_pos)
                 # checking if the move was made
                 if self.drag_start_position != new_pos:
@@ -110,6 +124,7 @@ class Piece(QGraphicsPixmapItem):
                     else:
                         self.scene().activePlayer = 'white'
                     print(self.scene().activePlayer)
+                self.possible_moves.clear()
             super().mouseReleaseEvent(event)
 
 

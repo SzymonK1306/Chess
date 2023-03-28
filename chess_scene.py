@@ -38,12 +38,6 @@ class Chess_Scene(QGraphicsScene):
         self.black_rooks = [Piece('black', 'Rook', 0, 0), Piece('black', 'Rook', 700, 0)]
         self.black_queens = [Piece('black', 'Queen',  300, 0)]
         self.black_king = Piece('black', 'King', 400, 0)
-        # self.black_pawns = [Pawn('b', 100 * i, 100) for i in range(8)]
-        # self.black_bishops = [Bishop('b', 200, 0), Bishop('b', 500, 0)]
-        # self.black_knights = [Knight('b', 100, 0), Knight('b', 600, 0)]
-        # self.black_rooks = [Rook('b', 0, 0), Rook('b', 700, 0)]
-        # self.black_queens = [Queen('b', 300, 0)]
-        # self.black_king = King('b', 400, 0)
 
         # add to scene
         [self.addItem(piece) for piece in self.black_pawns]
@@ -107,6 +101,16 @@ class Chess_Scene(QGraphicsScene):
             [piece.setPixmap(QPixmap("images/red_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
             [piece.setPixmap(QPixmap("images/red_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
 
+
+    def highlight_moves(self, possible_moves):
+        for i in range(len(possible_moves)):
+            coordinates = possible_moves[i]
+            self.board[int(coordinates[1]) * 8 + int(coordinates[0])].highlight_field()
+
+    def unhighlight_moves(self, possible_moves):
+        for i in range(len(possible_moves)):
+            coordinates = possible_moves[i]
+            self.board[int(coordinates[1]) * 8 + int(coordinates[0])].unhighlight_field()
 
     def active_player_information(self, text):
         self.textChanged.emit(text)
