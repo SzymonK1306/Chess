@@ -54,13 +54,23 @@ class ChessLogic:
             if self.board_logic_array[row + direction, col] == '.':
                 moves.append((row + direction, col))
 
-        # Check diagonal capture moves
-        if col > 0 and row + direction >= 0 and row + direction <= 7:
-            if self.board_logic_array[row + direction, col - 1].islower():
-                moves.append((row + direction, col - 1))
-        if col < 7 and row + direction >= 0 and row + direction <= 7:
-            if self.board_logic_array[row + direction, col + 1].islower():
-                moves.append((row + direction, col + 1))
+        # Check diagonal capture moves (white)
+        if direction == -1:
+            if col > 0 and row + direction >= 0 and row + direction <= 7:
+                if self.board_logic_array[row + direction, col - 1].islower():
+                    moves.append((row + direction, col - 1))
+            if col < 7 and row + direction >= 0 and row + direction <= 7:
+                if self.board_logic_array[row + direction, col + 1].islower():
+                    moves.append((row + direction, col + 1))
+
+        # Check diagonal capture moves (black)
+        if direction == 1:
+            if col > 0 and row + direction >= 0 and row + direction <= 7:
+                if self.board_logic_array[row + direction, col - 1].isupper():
+                    moves.append((row + direction, col - 1))
+            if col < 7 and row + direction >= 0 and row + direction <= 7:
+                if self.board_logic_array[row + direction, col + 1].isupper():
+                    moves.append((row + direction, col + 1))
 
         return moves
 
