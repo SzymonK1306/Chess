@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QLabel, QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsPixmapItem
+from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QLabel, QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsPixmapItem, QGraphicsTextItem
 from PyQt5.QtCore import QFile, QObject, Qt, QResource
 from PyQt5 import QtWidgets, uic
 from PySide6.QtUiTools import QUiLoader
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor
 from chess_scene import Chess_Scene
 import data_rc
 
