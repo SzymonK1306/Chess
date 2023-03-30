@@ -17,7 +17,7 @@ class Form(QtWidgets.QMainWindow):
 
         # find elements in .ui
         self.main_graphic = self.findChild(QGraphicsView, 'main_graphic')
-        self.title_label = self.findChild(QLabel, 'title_label')
+        # self.title_label = self.findChild(QLabel, 'title_label')
         # RC file
         # QResource.registerResource("images/data.qrc")
 

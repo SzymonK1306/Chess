@@ -119,14 +119,19 @@ class Piece(QGraphicsPixmapItem):
                     coordinates = self.possible_moves[i]
                     if drop_x == coordinates[1] and drop_y == coordinates[0]:
                         correct_flag = True
+                        break
 
                 if correct_flag:
+                    captured_item = [item for item in self.scene().items(new_pos, 100, 100) if isinstance(item, Piece) and item is not self]
+                    if captured_item:
+                        self.scene().removeItem(captured_item[0])
                     self.setPos(new_pos)
                     # checking if the move was made
                     if self.drag_start_position != new_pos:
                         # move in np.array
                         self.scene().chess_board.move(int(self.drag_start_position.y()/100), int(self.drag_start_position.x()/100),
                                                        int(new_pos.y()/100), int(new_pos.x()/100))
+
                         # change sites
                         if self.color == 'white':
                             self.scene().activePlayer = 'black'
