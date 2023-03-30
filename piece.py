@@ -76,7 +76,7 @@ class Piece(QGraphicsPixmapItem):
                 self.drag_start_position = QPointF(piece_x * 100, piece_y * 100)
 
                 # possible moves
-                self.possible_moves = self.scene().chess_board.get_pawn_moves(int(piece_y), int(piece_x))
+                self.possible_moves = self.scene().chess_board.get_piece_moves(int(piece_y), int(piece_x))
                 print(self.possible_moves)
                 self.scene().highlight_moves(self.possible_moves)
                 super().mousePressEvent(event)

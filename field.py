@@ -11,6 +11,7 @@ class Field(QGraphicsPixmapItem):
         self.x = x
         self.y = y
         self.mode = 'black'
+        self.piece = None
         if (self.x + self.y) % 2 == 1:
             self.setPixmap(QPixmap('images/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 

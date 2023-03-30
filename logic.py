@@ -21,6 +21,19 @@ class ChessLogic:
         self.board_logic_array[stopX, stopY] = piece
         print(self.board_logic_array)
 
+    def get_piece_moves(self, row, col):
+        moves = []
+        piece = self.board_logic_array[row, col]
+
+        print(piece)
+
+        if piece == 'P' or piece == 'p':
+            moves = self.get_pawn_moves(row, col)
+        elif piece == 'N' or piece == 'n':
+            moves = self.get_knight_moves((row, col), piece.isupper())
+
+        return moves
+
     def get_pawn_moves(self, row, col):
 
         moves = []
@@ -71,6 +84,27 @@ class ChessLogic:
             if col < 7 and row + direction >= 0 and row + direction <= 7:
                 if self.board_logic_array[row + direction, col + 1].isupper():
                     moves.append((row + direction, col + 1))
+
+        return moves
+
+    def get_knight_moves(self, pos, color):
+        """
+        Given a chess board, a position of a knight, and the color of the knight,
+        returns all possible moves for that knight.
+        """
+        row, col = pos
+
+        moves = []
+
+        # Check all possible moves for the knight
+        for dr, dc in [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]:
+            new_row, new_col = row + dr, col + dc
+
+            # Check if the new position is on the board
+            if 0 <= new_row < 8 and 0 <= new_col < 8:
+                # Check if the new position is not occupied by a piece of the same color
+                if self.board_logic_array[new_row][new_col] == '.' or (self.board_logic_array[new_row][new_col].isupper() ^ color):
+                    moves.append((new_row, new_col))
 
         return moves
 
