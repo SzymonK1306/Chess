@@ -57,3 +57,6 @@ class Field(QGraphicsPixmapItem):
             self.setPixmap(
                 QPixmap('images/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
+    def assign_piece(self, piece):
+        self.piece = piece
+

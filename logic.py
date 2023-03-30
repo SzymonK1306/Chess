@@ -31,6 +31,12 @@ class ChessLogic:
             moves = self.get_pawn_moves(row, col)
         elif piece == 'N' or piece == 'n':
             moves = self.get_knight_moves((row, col), piece.isupper())
+        elif piece == 'B' or piece == 'b':
+            moves = self.get_bishop_moves((row, col))
+        elif piece == 'R' or piece == 'r':
+            moves = self.get_rook_moves((row, col))
+        elif piece == 'Q' or piece == 'q':
+            moves = self.get_queen_moves((row, col))
 
         return moves
 
@@ -107,5 +113,67 @@ class ChessLogic:
                     moves.append((new_row, new_col))
 
         return moves
+
+    def get_bishop_moves(self, current_pos):
+        x, y = current_pos
+        bishop_moves = []
+        color = self.board_logic_array[x][y].islower()
+
+        # Check all 4 diagonal directions
+        for dx, dy in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+            i, j = x + dx, y + dy
+            while 0 <= i < 8 and 0 <= j < 8:
+                if self.board_logic_array[i][j] == '.':
+                    bishop_moves.append((i, j))
+                elif self.board_logic_array[i][j].islower() == color:
+                    break
+                else:
+                    bishop_moves.append((i, j))
+                    break
+                i += dx
+                j += dy
+        return bishop_moves
+
+    def get_rook_moves(self, current_pos):
+        x, y = current_pos
+        rook_moves = []
+        color = self.board_logic_array[x][y].islower()
+
+        # Check all 4 directions
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+            i, j = x + dx, y + dy
+            while 0 <= i < 8 and 0 <= j < 8:
+                if self.board_logic_array[i][j] == '.':
+                    rook_moves.append((i, j))
+                elif self.board_logic_array[i][j].islower() == color:
+                    break
+                else:
+                    rook_moves.append((i, j))
+                    break
+                i += dx
+                j += dy
+        return rook_moves
+
+    def get_queen_moves(self, current_pos):
+        x, y = current_pos
+        queen_moves = []
+        color = self.board_logic_array[x][y].islower()
+
+        # Check all 8 directions
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+            i, j = x + dx, y + dy
+            while 0 <= i < 8 and 0 <= j < 8:
+                if self.board_logic_array[i][j] == '.':
+                    queen_moves.append((i, j))
+                elif self.board_logic_array[i][j].islower() == color:
+                    break
+                else:
+                    queen_moves.append((i, j))
+                    break
+                i += dx
+                j += dy
+        return queen_moves
+
+
 
 
