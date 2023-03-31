@@ -14,18 +14,37 @@ class ChessLogic:
                                            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']])
 
         print(self.board_logic_array)
+        # color of active player
+        self.color = 'white'
 
     def move(self, startX, startY, stopX, stopY):
+        """
+        Make move on array board
+        :param startX: int          :param startY: int        :param stopX: int        :param stopY: int
+        :return:
+        """
         piece = self.board_logic_array[startX, startY]
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
-        print(self.board_logic_array)
+        # print(self.board_logic_array)
 
     def get_piece_moves(self, row, col):
+        """
+        Get possible move of piece in given position
+        :param row: int        :param col: int
+        :return: list
+        """
         moves = []
         piece = self.board_logic_array[row, col]
 
-        print(piece)
+        if self.color == 'white':
+            king_position = np.argwhere(self.board_logic_array == 'K')[0]
+        else:
+            king_position = np.argwhere(self.board_logic_array == 'k')[0]
+
+        print(king_position)
+
+        # print(self.is_king_in_check(king_position, self.color))
 
         if piece == 'P' or piece == 'p':
             moves = self.get_pawn_moves(row, col)
@@ -39,6 +58,11 @@ class ChessLogic:
             moves = self.get_queen_moves((row, col))
         elif piece == 'K' or piece == 'k':
             moves = self.get_king_moves((row, col))
+
+        if self.color == 'white':
+            self.color = 'black'
+        else:
+            self.color = 'white'
 
         return moves
 
@@ -177,58 +201,19 @@ class ChessLogic:
         return queen_moves
 
     def get_king_moves(self, current_pos):
-        x, y = current_pos
-        king_moves = []
+        row, col = current_pos
+        # Get the color of the king
+        color = self.board_logic_array[row, col].isupper()
 
-        # Check all 8 adjacent squares
-        for dx in [-1, 0, 1]:
-            for dy in [-1, 0, 1]:
-                if dx == 0 and dy == 0:
-                    continue
-                i, j = x + dx, y + dy
-                # if 0 <= i < 8 and 0 <= j < 8 and not self.is_square_dangerous((i, j)):
-                if 0 <= i < 8 and 0 <= j < 8:
-                    king_moves.append((i, j))
-        return king_moves
+        # Define the list of all possible moves for the king
+        moves = [(row + i, col + j) for i in [-1, 0, 1] for j in [-1, 0, 1] if (i, j) != (0, 0)]
 
-    def is_square_dangerous(self, pos):
-        x, y = pos
-        color = self.board_logic_array[x][y].islower()
+        # Filter out any moves that are not valid
+        valid_moves = []
+        for r, c in moves:
+            if 0 <= r < 8 and 0 <= c < 8:  # Make sure the move is within the board
+                if self.board_logic_array[r, c] == '.' or self.board_logic_array[r, c].isupper() != color:  # Make sure the square is not occupied by a piece of the same color
+                    valid_moves.append((r, c))
 
-        # Check for knights
-        for dx, dy in [(2, 1), (1, 2), (-2, 1), (-1, 2), (2, -1), (1, -2), (-2, -1), (-1, -2)]:
-            i, j = x + dx, y + dy
-            if 0 <= i < 8 and 0 <= j < 8 and self.board_logic_array[i][j].lower() == 'n' and self.board_logic_array[i][
-                j].islower() != color:
-                return True
+        return valid_moves
 
-        # Check for pawns
-        if color == 1:
-            if x > 0:
-                if y > 0 and self.board_logic_array[x - 1][y - 1] == 'p':
-                    return True
-                if y < 7 and self.board_logic_array[x - 1][y + 1] == 'p':
-                    return True
-            return False
-        else:
-            if x < 7:
-                if y > 0 and self.board_logic_array[x + 1][y - 1] == 'P':
-                    return True
-                if y < 7 and self.board_logic_array[x + 1][y + 1] == 'P':
-                    return True
-            return False
-
-        # Check for other pieces
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
-            i, j = x + dx, y + dy
-            if 0 <= i < 8 and 0 <= j < 8 and self.board_logic_array[i][j] != '.' and self.board_logic_array[i][
-                j].islower() != color:
-                if self.board_logic_array[i][j].lower() == 'k':
-                    return True
-                if self.board_logic_array[i][j].lower() == 'q' and (dx == 0 or dy == 0 or abs(dx) == abs(dy)):
-                    return True
-                if self.board_logic_array[i][j].lower() == 'r' and (dx == 0 or dy == 0):
-                    return True
-                if self.board_logic_array[i][j].lower() == 'b' and abs(dx) == abs(dy):
-                    return True
-        return False

@@ -68,8 +68,10 @@ class Piece(QGraphicsPixmapItem):
     def mousePressEvent(self, event):
         if self.color == self.scene().activePlayer:     # checking color
             if event.button() == Qt.LeftButton:
+                self.setOpacity(0.5)
                 self.setCursor(QCursor(Qt.ClosedHandCursor))
                 self.drag_start_position = event.scenePos()
+
                 # save start position
                 piece_x = self.drag_start_position.x()//100
                 piece_y = self.drag_start_position.y() // 100
@@ -77,33 +79,18 @@ class Piece(QGraphicsPixmapItem):
 
                 # possible moves
                 self.possible_moves = self.scene().chess_board.get_piece_moves(int(piece_y), int(piece_x))
-                print(self.possible_moves)
+
                 self.scene().highlight_moves(self.possible_moves)
                 super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
         if self.color == self.scene().activePlayer:     # checking color
             super().mouseMoveEvent(event)
-            # if event.buttons() & Qt.LeftButton:
-            #     pos = event.scenePos()
-                # self.setPos(pos.x() - self.rect().width() / 2, pos.y() - self.rect().height() / 2)
-    #
-    # def mouseMoveEvent(self, event):
-    #     if event.buttons() == Qt.LeftButton:
-    #         drag_distance = (event.scenePos() - self.drag_start_position).manhattanLength()
-    #         if drag_distance >= QApplication.startDragDistance():
-    #             # drag = QDrag(event.widget())
-    #             # mime_data = QMimeData()
-    #             # drag.setMimeData(mime_data)
-    #             # drag.setPixmap(self.grab())
-    #             # drag.setHotSpot(event.pos())
-    #             # drag.exec(Qt.CopyAction)
-    #             pass
-    #     super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
         if self.color == self.scene().activePlayer:     # checking color
             if event.button() == Qt.LeftButton:
+                self.setOpacity(1.0)
                 # unhighlight fields
                 self.scene().unhighlight_moves(self.possible_moves)
 
@@ -137,7 +124,7 @@ class Piece(QGraphicsPixmapItem):
                             self.scene().activePlayer = 'black'
                         else:
                             self.scene().activePlayer = 'white'
-                        print(self.scene().activePlayer)
+                        # print(self.scene().activePlayer)
                 else:
                     self.setPos(self.drag_start_position)
                 self.possible_moves.clear()

@@ -209,7 +209,7 @@ class Chess_Scene(QGraphicsScene):
         text_5.setFont(font)
         text_5.setDefaultTextColor(color)
         text_5.setPos(780, 300)
-        self.addItem(text_4)
+        self.addItem(text_5)
 
         text_6.setFont(font)
         text_6.setDefaultTextColor(color)
