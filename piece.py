@@ -12,6 +12,8 @@ class Piece(QGraphicsPixmapItem):
         self.positionY = positionY
         self.type = type
         self.possible_moves = []
+        self.is_check = False
+        self.king_position = [0, 0]
 
         match type:
             case 'Pawn':
@@ -109,6 +111,8 @@ class Piece(QGraphicsPixmapItem):
                         break
 
                 if correct_flag:
+                    # if self.is_check:
+                    #     self.scene().unhighlight_moves(self.king_position)
                     captured_item = [item for item in self.scene().items(new_pos, 100, 100) if isinstance(item, Piece) and item is not self]
                     if captured_item:
                         self.scene().removeItem(captured_item[0])
@@ -119,12 +123,19 @@ class Piece(QGraphicsPixmapItem):
                         self.scene().chess_board.move(int(self.drag_start_position.y()/100), int(self.drag_start_position.x()/100),
                                                        int(new_pos.y()/100), int(new_pos.x()/100))
 
+                        self.is_check, self.king_position = self.scene().chess_board.is_check()
+                        if self.is_check:
+                            # red highlight
+                            self.scene().check_highlight(self.king_position)
+
                         # change sites
                         if self.color == 'white':
                             self.scene().activePlayer = 'black'
                         else:
                             self.scene().activePlayer = 'white'
-                        # print(self.scene().activePlayer)
+                        print(self.is_check)
+                        if not self.is_check:
+                            self.scene().unhighlight_moves(self.king_position)
                 else:
                     self.setPos(self.drag_start_position)
                 self.possible_moves.clear()

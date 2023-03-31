@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 
 
@@ -15,7 +17,8 @@ class ChessLogic:
 
         print(self.board_logic_array)
         # color of active player
-        self.color = 'white'
+        self.color = 1
+        self.check_now = False
 
     def move(self, startX, startY, stopX, stopY):
         """
@@ -37,32 +40,14 @@ class ChessLogic:
         moves = []
         piece = self.board_logic_array[row, col]
 
-        if self.color == 'white':
-            king_position = np.argwhere(self.board_logic_array == 'K')[0]
-        else:
-            king_position = np.argwhere(self.board_logic_array == 'k')[0]
-
-        print(king_position)
-
         # print(self.is_king_in_check(king_position, self.color))
 
-        if piece == 'P' or piece == 'p':
-            moves = self.get_pawn_moves(row, col)
-        elif piece == 'N' or piece == 'n':
-            moves = self.get_knight_moves((row, col), piece.isupper())
-        elif piece == 'B' or piece == 'b':
-            moves = self.get_bishop_moves((row, col))
-        elif piece == 'R' or piece == 'r':
-            moves = self.get_rook_moves((row, col))
-        elif piece == 'Q' or piece == 'q':
-            moves = self.get_queen_moves((row, col))
-        elif piece == 'K' or piece == 'k':
-            moves = self.get_king_moves((row, col))
+        moves = self.single_piece_move(piece, row, col)
 
-        if self.color == 'white':
-            self.color = 'black'
+        if self.color:
+            self.color = 0
         else:
-            self.color = 'white'
+            self.color = 1
 
         return moves
 
@@ -216,4 +201,45 @@ class ChessLogic:
                     valid_moves.append((r, c))
 
         return valid_moves
+
+    def is_square_under_attack(self, position):
+        # color white -> 1 black -> 0
+        for x, y in itertools.product(range(8), range(8)):
+            piece = self.board_logic_array[x][y]
+
+            if piece != '.' and piece.isupper() != self.color:
+                moves = self.single_piece_move(piece, x, y)
+
+                if (position[0], position[1]) in moves:
+                    return True
+        return False
+
+    def is_check(self):
+        if self.color:
+            king_position = np.argwhere(self.board_logic_array == 'K')[0]
+        else:
+            king_position = np.argwhere(self.board_logic_array == 'k')[0]
+
+        is_check = self.is_square_under_attack(king_position)
+        king_position = [(king_position[0], king_position[1])]
+
+        self.check_now = is_check
+
+        return is_check, king_position
+
+    def single_piece_move(self, piece,  row, col):
+        if piece == 'P' or piece == 'p':
+            moves = self.get_pawn_moves(row, col)
+        elif piece == 'N' or piece == 'n':
+            moves = self.get_knight_moves((row, col), piece.isupper())
+        elif piece == 'B' or piece == 'b':
+            moves = self.get_bishop_moves((row, col))
+        elif piece == 'R' or piece == 'r':
+            moves = self.get_rook_moves((row, col))
+        elif piece == 'Q' or piece == 'q':
+            moves = self.get_queen_moves((row, col))
+        elif piece == 'K' or piece == 'k':
+            moves = self.get_king_moves((row, col))
+
+        return moves
 

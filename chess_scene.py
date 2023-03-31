@@ -121,6 +121,10 @@ class Chess_Scene(QGraphicsScene):
             y = scene_item.positionY
             color = scene_item.color
 
+    def check_highlight(self, king_position):
+        kingX, kingY = king_position[0]
+        self.board[int(kingY) * 8 + int(kingX)].red_highlight()
+
     def text_init(self):
         # create a QGraphicsTextItem
         a_text = QGraphicsTextItem("A")
