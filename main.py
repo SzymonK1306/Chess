@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, uic
 from PySide6.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor
 from chess_scene import Chess_Scene
+from clock import Clock
 import data_rc
 
 
@@ -17,6 +18,12 @@ class Form(QtWidgets.QMainWindow):
 
         # find elements in .ui
         self.main_graphic = self.findChild(QGraphicsView, 'main_graphic')
+
+        self.white_clock_view = self.findChild(QGraphicsView, 'white_clock_view')
+        self.black_clock_view = self.findChild(QGraphicsView, 'black_clock_view')
+
+        self.white_clock_view.setScene(Clock())
+        self.black_clock_view.setScene(Clock())
         # self.title_label = self.findChild(QLabel, 'title_label')
         # RC file
         # QResource.registerResource("images/data.qrc")
