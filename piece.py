@@ -68,6 +68,7 @@ class Piece(QGraphicsPixmapItem):
     def mousePressEvent(self, event):
         if self.color == self.scene().activePlayer:     # checking color
             if event.button() == Qt.LeftButton:
+                # cosmetic
                 self.setOpacity(0.5)
                 self.setCursor(QCursor(Qt.ClosedHandCursor))
                 self.drag_start_position = event.scenePos()
@@ -136,6 +137,7 @@ class Piece(QGraphicsPixmapItem):
                                 self.scene().check_highlight(1)
 
                         print(self.scene().is_check, self.color)
+                        print(self.scene().chess_board.board_logic_array)
 
                         # change sites
                         if self.color == 'white':

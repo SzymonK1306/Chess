@@ -29,6 +29,12 @@ class ChessLogic:
         piece = self.board_logic_array[startX, startY]
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
+
+        if self.color:
+            self.color = 0
+        else:
+            self.color = 1
+
         # print(self.board_logic_array)
 
     def get_piece_moves(self, row, col):
@@ -43,11 +49,7 @@ class ChessLogic:
         # print(self.is_king_in_check(king_position, self.color))
 
         moves = self.single_piece_move(piece, row, col)
-
-        if self.color:
-            self.color = 0
-        else:
-            self.color = 1
+        moves = self.check_legal_moves(moves, row, col)
 
         return moves
 
@@ -55,8 +57,6 @@ class ChessLogic:
 
         moves = []
         piece = self.board_logic_array[row, col]
-
-        print(piece)
 
         # Check if the piece is a Pawn
         if piece != 'P' and piece != 'p':
@@ -214,12 +214,64 @@ class ChessLogic:
                     return True
         return False
 
-    def is_check(self):
+    def test_move(self, startX, startY, stopX, stopY):
+        piece = self.board_logic_array[startX, startY]
+        self.board_logic_array[startX, startY] = '.'
+        self.board_logic_array[stopX, stopY] = piece
+
+
+    def is_in_check(self):
         if self.color:
             king_position = np.argwhere(self.board_logic_array == 'K')[0]
         else:
             king_position = np.argwhere(self.board_logic_array == 'k')[0]
 
+
+        is_in_check = self.is_my_square_under_attack(king_position)
+        # king_position = [(king_position[0], king_position[1])]
+
+        self.check_now = is_in_check
+
+        print(king_position, not self.color, is_in_check)
+
+        return is_in_check
+
+    def is_my_square_under_attack(self, position):
+        # color white -> 1 black -> 0
+        for x, y in itertools.product(range(8), range(8)):
+            piece = self.board_logic_array[x][y]
+
+            if piece != '.' and piece.isupper() != self.color:
+                moves = self.single_piece_move(piece, x, y)
+
+                if (position[0], position[1]) in moves:
+                    return True
+        return False
+
+    def check_legal_moves(self, moves, row, col):
+        legal_moves = []
+        board_backup = np.copy(self.board_logic_array)
+        # print('backUp', board_backup)
+
+        # check move
+        for move in moves:
+            self.test_move(row, col, move[0], move[1])
+            if not self.is_in_check():
+                legal_moves.append(move)
+            self.board_logic_array = np.copy(board_backup)
+
+        self.board_logic_array = np.copy(board_backup)
+
+        return legal_moves
+
+    # TODO problem ze sprawdzaniem pol, wywołuje ruchy dla starej mapy
+
+    def is_check(self):
+        if self.color:
+            king_position = np.argwhere(self.board_logic_array == 'K')[0]
+        else:
+            king_position = np.argwhere(self.board_logic_array == 'k')[0]
+        # board = self.board_logic_array
         is_check = self.is_square_under_attack(king_position)
         king_position = [(king_position[0], king_position[1])]
 
