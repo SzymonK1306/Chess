@@ -21,6 +21,9 @@ class ChessLogic:
         self.color = 1
         self.check_now = False
 
+        self.white_promotion = []
+        self.black_promotion = []
+
     def move(self, startX, startY, stopX, stopY):
         """
         Make move on array board
@@ -31,6 +34,14 @@ class ChessLogic:
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
 
+        white_promotion = np.where(self.board_logic_array[0] == 'P')
+        black_promotion = np.where(self.board_logic_array[7] == 'p')
+        print(self.board_logic_array[0])
+        # print(white_promotion[0])
+        if len(white_promotion[0]) != 0:
+            self.white_promotion = [white_promotion[0]]
+        if len(black_promotion[0]) != 0:
+            self.black_promotion = [black_promotion[0]]
         # change color alter move
         # white - 1, black - 0
         if self.color:
@@ -276,17 +287,22 @@ class ChessLogic:
                     return True
         return False
 
-    def is_my_square_under_attack(self, position):
-        # color white -> 1 black -> 0
-        for x, y in itertools.product(range(8), range(8)):
-            piece = self.board_logic_array[x][y]
+    def is_check(self):
+        """
+        Checking that active player made check
+        :return:
+        """
+        if self.color:
+            king_position = np.argwhere(self.board_logic_array == 'K')[0]
+        else:
+            king_position = np.argwhere(self.board_logic_array == 'k')[0]
 
-            if piece != '.' and piece.isupper() != self.color:
-                moves = self.single_piece_move(piece, x, y)
+        is_check = self.is_square_under_attack(king_position)
+        king_position = [(king_position[0], king_position[1])]
 
-                if (position[0], position[1]) in moves:
-                    return True
-        return False
+        self.check_now = is_check
+
+        return is_check, king_position
 
     def is_in_check(self):
         """
@@ -298,11 +314,9 @@ class ChessLogic:
         else:
             king_position = np.argwhere(self.board_logic_array == 'k')[0]
 
-        is_in_check = self.is_my_square_under_attack(king_position)
+        is_in_check = self.is_square_under_attack(king_position)
 
         self.check_now = is_in_check
-
-        print(king_position, not self.color, is_in_check)
 
         return is_in_check
 
@@ -316,16 +330,43 @@ class ChessLogic:
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
 
-    def is_check(self):
-        if self.color:
-            king_position = np.argwhere(self.board_logic_array == 'K')[0]
-        else:
-            king_position = np.argwhere(self.board_logic_array == 'k')[0]
-        # board = self.board_logic_array
-        is_check = self.is_square_under_attack(king_position)
-        king_position = [(king_position[0], king_position[1])]
+    def is_my_square_under_attack(self, position):
+        # color white -> 1 black -> 0
+        for x, y in itertools.product(range(8), range(8)):
+            piece = self.board_logic_array[x][y]
 
-        self.check_now = is_check
+            if piece != '.' and piece.isupper() != self.color:
+                moves = self.single_piece_move(piece, x, y)
 
-        return is_check, king_position
+                if (position[0], position[1]) in moves:
+                    return True
+        return False
+
+    def pawn_promotion(self, x, y, chosen_piece):
+        pawn = self.board_logic_array[x][y]
+
+        match chosen_piece:
+            case 'Queen':
+                if pawn.isupper():
+                    self.board_logic_array[x][y] = 'Q'
+                else:
+                    self.board_logic_array[x][y] = 'q'
+            case 'Rook':
+                if pawn.isupper():
+                    self.board_logic_array[x][y] = 'R'
+                else:
+                    self.board_logic_array[x][y] = 'r'
+            case 'Bishop':
+                if pawn.isupper():
+                    self.board_logic_array[x][y] = 'B'
+                else:
+                    self.board_logic_array[x][y] = 'b'
+            case 'Knight':
+                if pawn.isupper():
+                    self.board_logic_array[x][y] = 'N'
+                else:
+                    self.board_logic_array[x][y] = 'n'
+
+        print(self.board_logic_array)
+
 

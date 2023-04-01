@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QMenu, QAction, QGraphicsTextItem
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QMenu, QAction, QGraphicsTextItem, QDialog
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QPointF
 from piece import Piece
 from logic import ChessLogic
 from field import Field
+from promotion import PromotionDialog
 import numpy as np
 
 
@@ -74,6 +75,8 @@ class Chess_Scene(QGraphicsScene):
         # save kings positions
         self.white_king_position = [(7, 4)]
         self.black_king_position = [(0, 4)]
+
+        # self.pawn_promotion()
 
     def contextMenuEvent(self, event):
         """
@@ -173,6 +176,28 @@ class Chess_Scene(QGraphicsScene):
             self.board[int(self.white_king_position[0][1]) * 8 + int(self.white_king_position[0][0])].unhighlight_field()
         else:
             self.board[int(self.black_king_position[0][1]) * 8 + int(self.black_king_position[0][0])].unhighlight_field()
+
+    def pawn_promotion(self, position, color):
+        # get pawn position
+        x_pos = position[0][0]
+        y_pos = 0 if color == 'white' else 7
+        pawn_pos = QPointF(x_pos * 100, y_pos * 100)
+
+        # open dialog
+        promotion_dialog = PromotionDialog()
+        result = promotion_dialog.exec()
+        if result == QDialog.DialogCode.Accepted:
+            chosen_piece = promotion_dialog.chosen_piece  # This will return the string argument passed to accept()
+
+            # find pawn
+            item = [item for item in self.items(pawn_pos, 100, 100) if isinstance(item, Piece)]
+            item[0].change_piece(chosen_piece)
+
+            self.chess_board.pawn_promotion(y_pos, x_pos, chosen_piece)
+        else:
+            self.pawn_promotion(position, color)
+
+    # ... handle the case where the user closed the dialog box without choosing a piece ...
 
     def text_init(self):
         """
