@@ -57,6 +57,9 @@ class Chess_Scene(QGraphicsScene):
         self.text_init()
         self.activePlayer = 'white'
         self.chess_board = ChessLogic()
+        self.is_check = False
+        self.white_king_position = [(7, 4)]
+        self.black_king_position = [(0, 4)]
 
     def contextMenuEvent(self, event):
         menu = QMenu()
@@ -121,9 +124,18 @@ class Chess_Scene(QGraphicsScene):
             y = scene_item.positionY
             color = scene_item.color
 
-    def check_highlight(self, king_position):
-        kingX, kingY = king_position[0]
+    def check_highlight(self, color):
+        if color:
+            kingX, kingY = self.white_king_position[0]
+        else:
+            kingX, kingY = self.black_king_position[0]
         self.board[int(kingY) * 8 + int(kingX)].red_highlight()
+
+    def unhighlight_king(self, color):
+        if color:
+            self.board[int(self.white_king_position[0][1]) * 8 + int(self.white_king_position[0][0])].unhighlight_field()
+        else:
+            self.board[int(self.black_king_position[0][1]) * 8 + int(self.black_king_position[0][0])].unhighlight_field()
 
     def text_init(self):
         # create a QGraphicsTextItem

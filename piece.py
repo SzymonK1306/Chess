@@ -12,8 +12,6 @@ class Piece(QGraphicsPixmapItem):
         self.positionY = positionY
         self.type = type
         self.possible_moves = []
-        self.is_check = False
-        self.king_position = [0, 0]
 
         match type:
             case 'Pawn':
@@ -113,6 +111,10 @@ class Piece(QGraphicsPixmapItem):
                 if correct_flag:
                     # if self.is_check:
                     #     self.scene().unhighlight_moves(self.king_position)
+                    if self.color == 'black':
+                        self.scene().unhighlight_king(1)
+                    else:
+                        self.scene().unhighlight_king(0)
                     captured_item = [item for item in self.scene().items(new_pos, 100, 100) if isinstance(item, Piece) and item is not self]
                     if captured_item:
                         self.scene().removeItem(captured_item[0])
@@ -123,19 +125,25 @@ class Piece(QGraphicsPixmapItem):
                         self.scene().chess_board.move(int(self.drag_start_position.y()/100), int(self.drag_start_position.x()/100),
                                                        int(new_pos.y()/100), int(new_pos.x()/100))
 
-                        self.is_check, self.king_position = self.scene().chess_board.is_check()
-                        if self.is_check:
-                            # red highlight
-                            self.scene().check_highlight(self.king_position)
+                        # enemy in check
+                        if self.color == 'black':
+                            self.scene().is_check, self.scene().black_king_position = self.scene().chess_board.is_check()
+                            if self.scene().is_check:
+                                self.scene().check_highlight(0)
+                        else:
+                            self.scene().is_check, self.scene().white_king_position = self.scene().chess_board.is_check()
+                            if self.scene().is_check:
+                                self.scene().check_highlight(1)
+
+                        print(self.scene().is_check, self.color)
 
                         # change sites
                         if self.color == 'white':
                             self.scene().activePlayer = 'black'
                         else:
                             self.scene().activePlayer = 'white'
-                        print(self.is_check)
-                        if not self.is_check:
-                            self.scene().unhighlight_moves(self.king_position)
+                        # print(self.is_check)
+                        # self.scene().unhighlight_moves(self.king_position)
                 else:
                     self.setPos(self.drag_start_position)
                 self.possible_moves.clear()
