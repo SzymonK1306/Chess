@@ -157,40 +157,40 @@ class Piece(QGraphicsPixmapItem):
                         QPixmap('images/black_pawn.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 else:
                     self.setPixmap(
-                        QPixmap('images/white_pawn.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/white_pieces/white_pawn.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             case 'Rook':
                 if self.color == 'black':
                     self.setPixmap(
-                        QPixmap('images/black_rook.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/black_pieces/black_rook.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 else:
                     self.setPixmap(
-                        QPixmap('images/white_rook.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/white_pieces/white_rook.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             case 'Knight':
                 if self.color == 'black':
                     self.setPixmap(
-                        QPixmap('images/black_knight.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/black_pieces/black_knight.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 else:
                     self.setPixmap(
-                        QPixmap('images/white_knight.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/white_pieces/white_knight.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             case 'Bishop':
                 if self.color == 'black':
                     self.setPixmap(
-                        QPixmap('images/black_bishop.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/black_pieces/black_bishop.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 else:
                     self.setPixmap(
-                        QPixmap('images/white_bishop.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/white_pieces/white_bishop.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             case 'Queen':
                 if self.color == 'black':
                     self.setPixmap(
-                        QPixmap('images/black_queen.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/black_pieces/black_queen.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 else:
                     self.setPixmap(
-                        QPixmap('images/white_queen.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/white_pieces/white_queen.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             case 'King':
                 if self.color == 'black':
                     self.setPixmap(
-                        QPixmap('images/black_king.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/black_pieces/black_king.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 else:
                     self.setPixmap(
-                        QPixmap('images/white_king.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                        QPixmap(':/white_pieces/white_king.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 

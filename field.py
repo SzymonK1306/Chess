@@ -18,10 +18,10 @@ class Field(QGraphicsPixmapItem):
 
         # set pixmap
         if (self.x + self.y) % 2 == 1:
-            self.setPixmap(QPixmap('images/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.setPixmap(QPixmap(':/board/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
         else:
-            self.setPixmap(QPixmap('images/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.setPixmap(QPixmap(':/board/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
         self.setPos(self.x * 100, self.y * 100)
 
@@ -33,7 +33,7 @@ class Field(QGraphicsPixmapItem):
         self.mode = 'black'
         if (self.x + self.y) % 2 == 1:
             self.setPixmap(
-                QPixmap('images/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                QPixmap(':/board/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def blue_fields(self):
         """
@@ -43,7 +43,7 @@ class Field(QGraphicsPixmapItem):
         self.mode = 'blue'
         if (self.x + self.y) % 2 == 1:
             self.setPixmap(
-                QPixmap('images/blue_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                QPixmap(':/board/blue_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def highlight_field(self):
         """
@@ -51,7 +51,7 @@ class Field(QGraphicsPixmapItem):
         :return: None
         """
         self.setPixmap(
-            QPixmap('images/highlighted.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            QPixmap(':/board/highlighted.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def unhighlight_field(self):
         """
@@ -61,13 +61,13 @@ class Field(QGraphicsPixmapItem):
         if (self.x + self.y) % 2 == 1:
             if self.mode == 'black':
                 self.setPixmap(
-                    QPixmap('images/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    QPixmap(':/board/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             elif self.mode == 'blue':
                 self.setPixmap(
-                    QPixmap('images/blue_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                    QPixmap(':/board/blue_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         else:
             self.setPixmap(
-                QPixmap('images/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                QPixmap(':/board/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def red_highlight(self):
         """
@@ -75,5 +75,5 @@ class Field(QGraphicsPixmapItem):
         :return:
         """
         self.setPixmap(
-            QPixmap('images/check_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            QPixmap(':/board/check_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 

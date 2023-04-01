@@ -1,7 +1,34 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource prefix="/board">
-        <file>board.png</file>
-        <file>board.avif</file>
+        <file>black_field.png</file>
+        <file>blue_field.png</file>
+        <file>white_field.png</file>
+        <file>highlighted.png</file>
+        <file>check_field.png</file>
+    </qresource>
+    <qresource prefix="/black_pieces">
+        <file>black_bishop.png</file>
+        <file>black_king.png</file>
+        <file>black_knight.png</file>
+        <file>black_queen.png</file>
+        <file>black_rook.png</file>
+        <file>black_pawn.png</file>
+    </qresource>
+    <qresource prefix="/red_pieces">
+        <file>red_bishop.png</file>
+        <file>red_king.png</file>
+        <file>red_knight.png</file>
+        <file>red_queen.png</file>
+        <file>red_rook.png</file>
+        <file>red_pawn.png</file>
+    </qresource>
+    <qresource prefix="/white_pieces">
+        <file>white_bishop.png</file>
+        <file>white_king.png</file>
+        <file>white_knight.png</file>
+        <file>white_queen.png</file>
+        <file>white_rook.png</file>
+        <file>white_pawn.png</file>
     </qresource>
 </RCC>

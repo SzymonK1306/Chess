@@ -5,6 +5,7 @@ from piece import Piece
 from logic import ChessLogic
 from field import Field
 from promotion import PromotionDialog
+import data_rc
 import numpy as np
 
 
@@ -112,19 +113,19 @@ class Chess_Scene(QGraphicsScene):
             # self.board.setPixmap(QPixmap("images/board2_new.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             [single_field.blue_fields() for single_field in self.board]
         elif action == change_pieces1_action:
-            self.black_king.setPixmap(QPixmap("images/black_king.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-            [piece.setPixmap(QPixmap("images/black_pawn.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_pawns]
-            [piece.setPixmap(QPixmap("images/black_bishop.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_bishops]
-            [piece.setPixmap(QPixmap("images/black_knight.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_knights]
-            [piece.setPixmap(QPixmap("images/black_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
-            [piece.setPixmap(QPixmap("images/black_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
+            self.black_king.setPixmap(QPixmap(":/black_pieces/black_king.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            [piece.setPixmap(QPixmap(":/black_pieces/black_pawn.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_pawns]
+            [piece.setPixmap(QPixmap(":/black_pieces/black_bishop.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_bishops]
+            [piece.setPixmap(QPixmap(":/black_pieces/black_knight.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_knights]
+            [piece.setPixmap(QPixmap(":/black_pieces/black_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
+            [piece.setPixmap(QPixmap(":/black_pieces/black_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
         elif action == change_pieces2_action:
-            self.black_king.setPixmap(QPixmap("images/red_king.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-            [piece.setPixmap(QPixmap("images/red_pawn.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_pawns]
-            [piece.setPixmap(QPixmap("images/red_bishop.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_bishops]
-            [piece.setPixmap(QPixmap("images/red_knight.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_knights]
-            [piece.setPixmap(QPixmap("images/red_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
-            [piece.setPixmap(QPixmap("images/red_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
+            self.black_king.setPixmap(QPixmap(":/red_pieces/red_king.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            [piece.setPixmap(QPixmap(":/red_pieces/red_pawn.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_pawns]
+            [piece.setPixmap(QPixmap(":/red_pieces/red_bishop.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_bishops]
+            [piece.setPixmap(QPixmap(":/red_pieces/red_knight.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_knights]
+            [piece.setPixmap(QPixmap(":/red_pieces/red_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
+            [piece.setPixmap(QPixmap(":/red_pieces/red_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
 
     def highlight_moves(self, possible_moves):
         """
