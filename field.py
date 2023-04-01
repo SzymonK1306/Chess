@@ -8,26 +8,38 @@ from PyQt5.QtWidgets import QGraphicsPixmapItem
 class Field(QGraphicsPixmapItem):
     def __init__(self, x, y):
         super().__init__()
+
+        # position on board
         self.x = x
         self.y = y
+
+        # mode
         self.mode = 'black'
-        self.piece = None
+
+        # set pixmap
         if (self.x + self.y) % 2 == 1:
             self.setPixmap(QPixmap('images/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
         else:
             self.setPixmap(QPixmap('images/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
-        # self.setPos(self.x * 100, 700 - self.y * 100)
         self.setPos(self.x * 100, self.y * 100)
 
     def black_fields(self):
+        """
+        Set black-white fields
+        :return:
+        """
         self.mode = 'black'
         if (self.x + self.y) % 2 == 1:
             self.setPixmap(
                 QPixmap('images/black_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def blue_fields(self):
+        """
+        Set blue-white fields
+        :return:
+        """
         self.mode = 'blue'
         if (self.x + self.y) % 2 == 1:
             self.setPixmap(
@@ -58,8 +70,10 @@ class Field(QGraphicsPixmapItem):
                 QPixmap('images/white_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def red_highlight(self):
+        """
+        Red highlight for king when in check
+        :return:
+        """
         self.setPixmap(
             QPixmap('images/check_field.png').scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-    def assign_piece(self, piece):
-        self.piece = piece
 

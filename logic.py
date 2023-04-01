@@ -16,6 +16,7 @@ class ChessLogic:
                                            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']])
 
         print(self.board_logic_array)
+
         # color of active player
         self.color = 1
         self.check_now = False
@@ -30,12 +31,12 @@ class ChessLogic:
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
 
+        # change color alter move
+        # white - 1, black - 0
         if self.color:
             self.color = 0
         else:
             self.color = 1
-
-        # print(self.board_logic_array)
 
     def get_piece_moves(self, row, col):
         """
@@ -46,14 +47,41 @@ class ChessLogic:
         moves = []
         piece = self.board_logic_array[row, col]
 
-        # print(self.is_king_in_check(king_position, self.color))
-
+        # all possible moves for the piece
         moves = self.single_piece_move(piece, row, col)
+
+        # delete move which will reveal king
         moves = self.check_legal_moves(moves, row, col)
 
         return moves
 
+    def single_piece_move(self, piece,  row, col):
+        """
+        Get all possible moves, even if it reveals king
+        :param piece: str
+        :param row: int        :param col: int
+        :return: list of tuples (moves)
+        """
+        if piece == 'P' or piece == 'p':
+            moves = self.get_pawn_moves(row, col)
+        elif piece == 'N' or piece == 'n':
+            moves = self.get_knight_moves((row, col), piece.isupper())
+        elif piece == 'B' or piece == 'b':
+            moves = self.get_bishop_moves((row, col))
+        elif piece == 'R' or piece == 'r':
+            moves = self.get_rook_moves((row, col))
+        elif piece == 'Q' or piece == 'q':
+            moves = self.get_queen_moves((row, col))
+        elif piece == 'K' or piece == 'k':
+            moves = self.get_king_moves((row, col))
+
+        return moves
+
     def get_pawn_moves(self, row, col):
+        """
+        :param row: int        :param col: int
+        :return: list of pawn moves
+        """
 
         moves = []
         piece = self.board_logic_array[row, col]
@@ -202,8 +230,42 @@ class ChessLogic:
 
         return valid_moves
 
+    def check_legal_moves(self, moves, row, col):
+        """
+        Delete illegal moves
+        :param moves: list of tuples
+        :param row: int        :param col: int
+        :return: list of tuples
+        """
+        legal_moves = []
+
+        # make a copy of board
+        board_backup = np.copy(self.board_logic_array)
+
+        # check move
+        for move in moves:
+
+            # make test move
+            self.test_move(row, col, move[0], move[1])
+
+            # if there is no check, it is legal
+            if not self.is_in_check():
+                legal_moves.append(move)
+
+            # restore original board
+            self.board_logic_array = np.copy(board_backup)
+
+        self.board_logic_array = np.copy(board_backup)
+
+        return legal_moves
+
     def is_square_under_attack(self, position):
-        # color white -> 1 black -> 0
+        """
+        Check that someone can attack given field
+        :param position: tuple
+        :return: bool
+        """
+        # color white - 1 black - 0
         for x, y in itertools.product(range(8), range(8)):
             piece = self.board_logic_array[x][y]
 
@@ -213,28 +275,6 @@ class ChessLogic:
                 if (position[0], position[1]) in moves:
                     return True
         return False
-
-    def test_move(self, startX, startY, stopX, stopY):
-        piece = self.board_logic_array[startX, startY]
-        self.board_logic_array[startX, startY] = '.'
-        self.board_logic_array[stopX, stopY] = piece
-
-
-    def is_in_check(self):
-        if self.color:
-            king_position = np.argwhere(self.board_logic_array == 'K')[0]
-        else:
-            king_position = np.argwhere(self.board_logic_array == 'k')[0]
-
-
-        is_in_check = self.is_my_square_under_attack(king_position)
-        # king_position = [(king_position[0], king_position[1])]
-
-        self.check_now = is_in_check
-
-        print(king_position, not self.color, is_in_check)
-
-        return is_in_check
 
     def is_my_square_under_attack(self, position):
         # color white -> 1 black -> 0
@@ -248,23 +288,33 @@ class ChessLogic:
                     return True
         return False
 
-    def check_legal_moves(self, moves, row, col):
-        legal_moves = []
-        board_backup = np.copy(self.board_logic_array)
-        # print('backUp', board_backup)
+    def is_in_check(self):
+        """
+        Checking check on active player site, to detect forbidden move
+        :return:
+        """
+        if self.color:
+            king_position = np.argwhere(self.board_logic_array == 'K')[0]
+        else:
+            king_position = np.argwhere(self.board_logic_array == 'k')[0]
 
-        # check move
-        for move in moves:
-            self.test_move(row, col, move[0], move[1])
-            if not self.is_in_check():
-                legal_moves.append(move)
-            self.board_logic_array = np.copy(board_backup)
+        is_in_check = self.is_my_square_under_attack(king_position)
 
-        self.board_logic_array = np.copy(board_backup)
+        self.check_now = is_in_check
 
-        return legal_moves
+        print(king_position, not self.color, is_in_check)
 
-    # TODO problem ze sprawdzaniem pol, wywołuje ruchy dla starej mapy
+        return is_in_check
+
+    def test_move(self, startX, startY, stopX, stopY):
+        """
+        Make test move to check legal moves
+        :param startX: int        :param startY: int        :param stopX: int        :param stopY: int
+        :return:
+        """
+        piece = self.board_logic_array[startX, startY]
+        self.board_logic_array[startX, startY] = '.'
+        self.board_logic_array[stopX, stopY] = piece
 
     def is_check(self):
         if self.color:
@@ -278,20 +328,4 @@ class ChessLogic:
         self.check_now = is_check
 
         return is_check, king_position
-
-    def single_piece_move(self, piece,  row, col):
-        if piece == 'P' or piece == 'p':
-            moves = self.get_pawn_moves(row, col)
-        elif piece == 'N' or piece == 'n':
-            moves = self.get_knight_moves((row, col), piece.isupper())
-        elif piece == 'B' or piece == 'b':
-            moves = self.get_bishop_moves((row, col))
-        elif piece == 'R' or piece == 'r':
-            moves = self.get_rook_moves((row, col))
-        elif piece == 'Q' or piece == 'q':
-            moves = self.get_queen_moves((row, col))
-        elif piece == 'K' or piece == 'k':
-            moves = self.get_king_moves((row, col))
-
-        return moves
 

@@ -7,12 +7,19 @@ from PyQt5.QtCore import Qt, QMimeData, QPointF
 class Piece(QGraphicsPixmapItem):
     def __init__(self, color, type, positionX, positionY):
         super().__init__()
-        self.color = color
+
+        self.color = color      # 'white' or 'black'
+
+        # position on board (QGraphicsScene)
         self.positionX = positionX
         self.positionY = positionY
-        self.type = type
+
+        self.type = type    # 'Pawn', 'Bishop', 'Knight', 'Rook', 'Queen', 'King'
+
+        # empty list of possible moves
         self.possible_moves = []
 
+        # match graphic to the type of piece
         match type:
             case 'Pawn':
                 if color == 'black':
@@ -59,13 +66,17 @@ class Piece(QGraphicsPixmapItem):
 
         self.setPos(self.positionX, positionY)
 
-    # PROTOTYPE OF DRAGGING
-        # if self.color == 'w':
+        # All pieces can be moved by mouse
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
         self.setCursor(QCursor(Qt.OpenHandCursor))
 
     def mousePressEvent(self, event):
+        """
+        Behavior after left click
+        :param event:
+        :return:
+        """
         if self.color == self.scene().activePlayer:     # checking color
             if event.button() == Qt.LeftButton:
                 # cosmetic
@@ -78,7 +89,7 @@ class Piece(QGraphicsPixmapItem):
                 piece_y = self.drag_start_position.y() // 100
                 self.drag_start_position = QPointF(piece_x * 100, piece_y * 100)
 
-                # possible moves
+                # possible moves from chess logic object
                 self.possible_moves = self.scene().chess_board.get_piece_moves(int(piece_y), int(piece_x))
 
                 self.scene().highlight_moves(self.possible_moves)
@@ -89,13 +100,22 @@ class Piece(QGraphicsPixmapItem):
             super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
+        """
+        Behavior after release
+        :param event:
+        :return:
+        """
         if self.color == self.scene().activePlayer:     # checking color
             if event.button() == Qt.LeftButton:
+
+                # cosmetic
                 self.setOpacity(1.0)
+                self.setCursor(QCursor(Qt.OpenHandCursor))
+
                 # unhighlight fields
                 self.scene().unhighlight_moves(self.possible_moves)
 
-                self.setCursor(QCursor(Qt.OpenHandCursor))
+                # calculate position of object after release (in the middle of the field)
                 drop_position = event.scenePos()
                 drop_x = int(drop_position.x() / 100)
                 drop_y = int(drop_position.y() / 100)
@@ -109,22 +129,31 @@ class Piece(QGraphicsPixmapItem):
                         correct_flag = True
                         break
 
+                # when move was correct
                 if correct_flag:
-                    # if self.is_check:
-                    #     self.scene().unhighlight_moves(self.king_position)
+
+                    # unhighlight king field (if move was correct then can not be in check)
                     if self.color == 'black':
                         self.scene().unhighlight_king(1)
                     else:
                         self.scene().unhighlight_king(0)
+
+                    # find captured piece
                     captured_item = [item for item in self.scene().items(new_pos, 100, 100) if isinstance(item, Piece) and item is not self]
+
+                    # if founded, delete it
                     if captured_item:
                         self.scene().removeItem(captured_item[0])
+
                     self.setPos(new_pos)
+
                     # checking if the move was made
                     if self.drag_start_position != new_pos:
-                        # move in np.array
-                        self.scene().chess_board.move(int(self.drag_start_position.y()/100), int(self.drag_start_position.x()/100),
-                                                       int(new_pos.y()/100), int(new_pos.x()/100))
+                        # move in chess logic object
+                        self.scene().chess_board.move(int(self.drag_start_position.y()/100),
+                                                      int(self.drag_start_position.x()/100),
+                                                      int(new_pos.y()/100),
+                                                      int(new_pos.x()/100))
 
                         # enemy in check
                         if self.color == 'black':
@@ -136,18 +165,17 @@ class Piece(QGraphicsPixmapItem):
                             if self.scene().is_check:
                                 self.scene().check_highlight(1)
 
-                        print(self.scene().is_check, self.color)
-                        print(self.scene().chess_board.board_logic_array)
-
                         # change sites
                         if self.color == 'white':
                             self.scene().activePlayer = 'black'
                         else:
                             self.scene().activePlayer = 'white'
-                        # print(self.is_check)
-                        # self.scene().unhighlight_moves(self.king_position)
+
+                # when move wasn't made, put on the start
                 else:
                     self.setPos(self.drag_start_position)
+
+                # clear move list
                 self.possible_moves.clear()
             super().mouseReleaseEvent(event)
 

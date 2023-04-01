@@ -14,11 +14,16 @@ class Chess_Scene(QGraphicsScene):
         self.board_number = 1
 
     def init_board(self):
+        """
+        Create pieces and initial state of the game
+        :return:
+        """
         # board generation
         # self.board = QGraphicsPixmapItem()
         # self.board.setPixmap(QPixmap(":/board/board.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         # self.addItem(self.board)
 
+        # create board
         self.board = [Field(i, j) for i in range(8) for j in range(8)]
         [self.addItem(single_field) for single_field in self.board]
 
@@ -54,14 +59,28 @@ class Chess_Scene(QGraphicsScene):
         [self.addItem(piece) for piece in self.white_queens]
         self.addItem(self.white_king)
 
+        # add description of each row and column
         self.text_init()
+
+        # white play first
         self.activePlayer = 'white'
+
+        # create logic class object
         self.chess_board = ChessLogic()
+
+        # there is no check
         self.is_check = False
+
+        # save kings positions
         self.white_king_position = [(7, 4)]
         self.black_king_position = [(0, 4)]
 
     def contextMenuEvent(self, event):
+        """
+        RPM menu to change graphics
+        :param event:
+        :return:
+        """
         menu = QMenu()
         menu.setTitle("Change")
 
@@ -104,40 +123,62 @@ class Chess_Scene(QGraphicsScene):
             [piece.setPixmap(QPixmap("images/red_rook.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_rooks]
             [piece.setPixmap(QPixmap("images/red_queen.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)) for piece in self.black_queens]
 
-
     def highlight_moves(self, possible_moves):
+        """
+        Highlight given fields
+        :param possible_moves: list of tuples
+        :return:
+        """
         for i in range(len(possible_moves)):
             coordinates = possible_moves[i]
+
+            # inverse coordinates due to numpy array to screen
             self.board[int(coordinates[1]) * 8 + int(coordinates[0])].highlight_field()
 
     def unhighlight_moves(self, possible_moves):
+        """
+        Unhighlight given fields
+        :param possible_moves: list of tuples
+        :return:
+        """
         for i in range(len(possible_moves)):
             coordinates = possible_moves[i]
+
+            # inverse coordinates due to numpy array to screen
             self.board[int(coordinates[1]) * 8 + int(coordinates[0])].unhighlight_field()
 
-    def active_player_information(self, text):
-        self.textChanged.emit(text)
-
-    def pieces_positions(self):
-        for scene_item in self.items():
-            x = scene_item.positionX
-            y = scene_item.positionY
-            color = scene_item.color
-
     def check_highlight(self, color):
+        """
+        Red highlight field with the king which is in check
+        :param color: white - True, black - false
+        :return:
+        """
+
+        # get king position
         if color:
             kingX, kingY = self.white_king_position[0]
         else:
             kingX, kingY = self.black_king_position[0]
+
+        # highlight field with king
         self.board[int(kingY) * 8 + int(kingX)].red_highlight()
 
     def unhighlight_king(self, color):
+        """
+        Unhighlight field after check
+        :param color: white - True, black - false
+        :return:
+        """
         if color:
             self.board[int(self.white_king_position[0][1]) * 8 + int(self.white_king_position[0][0])].unhighlight_field()
         else:
             self.board[int(self.black_king_position[0][1]) * 8 + int(self.black_king_position[0][0])].unhighlight_field()
 
     def text_init(self):
+        """
+        Add letters and numbers to rows and columns
+        :return:
+        """
         # create a QGraphicsTextItem
         a_text = QGraphicsTextItem("A")
         b_text = QGraphicsTextItem("B")
