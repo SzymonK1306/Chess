@@ -107,10 +107,8 @@ class Chess_Scene(QGraphicsScene):
         action = menu.exec(event.screenPos())
 
         if action == change_board1_action:
-            # self.board.setPixmap(QPixmap(":/board/board.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             [single_field.black_fields() for single_field in self.board]
         elif action == change_board2_action:
-            # self.board.setPixmap(QPixmap("images/board2_new.png").scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             [single_field.blue_fields() for single_field in self.board]
         elif action == change_pieces1_action:
             self.black_king.setPixmap(QPixmap(":/black_pieces/black_king.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))

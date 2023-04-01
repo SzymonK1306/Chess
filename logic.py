@@ -1,4 +1,5 @@
 import itertools
+from PyQt5.QtWidgets import QMessageBox
 
 import numpy as np
 
@@ -48,6 +49,20 @@ class ChessLogic:
             self.color = 0
         else:
             self.color = 1
+
+        self.check_now, _ = self.is_check()
+        if self.check_now:
+            checkmate = not any(self.get_piece_moves(x, y)
+                                for x, y in itertools.product(range(8), range(8))
+                                if self.board_logic_array[x, y] != '.'
+                                and self.board_logic_array[x, y].isupper() == self.color)
+            if checkmate:
+                color_text = 'Black' if self.color else 'White'
+                message_box = QMessageBox()
+                message_box.setText("Checkmate! Game over. " + color_text + ' wins')
+                message_box.exec()
+
+        print(self.check_now)
 
     def get_piece_moves(self, row, col):
         """
@@ -368,5 +383,8 @@ class ChessLogic:
                     self.board_logic_array[x][y] = 'n'
 
         print(self.board_logic_array)
+
+    # def get_all_possible_moves(self, x, y):
+
 
 

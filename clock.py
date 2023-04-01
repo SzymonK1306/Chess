@@ -38,7 +38,7 @@ class Clock(QGraphicsScene):
 
         # Create millisecond hand
         self.millisecondHand = QGraphicsLineItem(0, 0, 0, -120)
-        self.millisecondHand.setPen(QPen(Qt.red, 2))
+        self.millisecondHand.setPen(QPen(Qt.blue, 2))
         self.millisecondHand.setPos(QPointF(150, 150))
         self.millisecondHand.setZValue(3)
         self.addItem(self.millisecondHand)
