@@ -1,19 +1,27 @@
 from PyQt5.QtGui import QColor, QBrush, QPen, QFont
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsLineItem, QGraphicsTextItem, \
-    QGraphicsSimpleTextItem
+    QGraphicsSimpleTextItem, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QTime, QPointF
 import math
 
 class Clock(QGraphicsScene):
-    def __init__(self):
+    def __init__(self, color, parent=None):
         super().__init__()
         # Create the clock face
         # Set scene size
+        self.color = color
+        self.parent = parent
         self.setSceneRect(0, 0, 300, 300)
         self.gameTime = QTime(0, 10, 0)
 
+        self.active_color = QColor(72, 242, 5)
+        self.sleep_color = QColor(207, 242, 194)
+
         # Set scene background color
-        self.setBackgroundBrush(QBrush(Qt.gray))
+        if self.color == 'white':
+            self.setBackgroundBrush(QBrush(self.active_color))
+        else:
+            self.setBackgroundBrush(QBrush(self.sleep_color))
 
         # Create stopwatch ellipse item
         self.stopwatch = QGraphicsEllipseItem(0, 0, 250, 250)
@@ -63,7 +71,8 @@ class Clock(QGraphicsScene):
         # Create timer to update clock every second
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateClock)
-        self.timer.start(1)
+        if self.color == 'white':
+            self.timer.start(1)
 
 
     def updateClock(self):
@@ -74,13 +83,41 @@ class Clock(QGraphicsScene):
         self.minuteHand.setRotation(-self.gameTime.minute() * 6.0 + - seconds / 10.0)
         self.millisecondHand.setRotation(-self.gameTime.msec() * 0.36)
 
-        # Get current time
-        # currentTime = QTime.currentTime()
-        #
-        # # Calculate minute and second angles
-        # minuteAngle = (currentTime.minute() / 60) * 360
-        # secondAngle = (currentTime.msec() / 60) * 360
-        #
-        # # Rotate minute and second hands
-        # self.minuteHand.setRotation(minuteAngle)
-        # self.secondHand.setRotation(secondAngle)
+        if self.gameTime.hour() == 23:
+            self.timer.stop()
+            # Create a message box
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Your time is up!")
+            if self.color == 'white':
+                msg_box.setText("Your time is up! Black wins")
+            else:
+                msg_box.setText("Your time is up! White wins")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec()
+
+            self.parent.close()
+
+    def mousePressEvent(self, event):
+        if self.color == 'white':
+            if self.parent.scene.get_game_state() == 'white_clock':
+                # Stop the timer when the scene is clicked
+                self.timer.stop()
+                self.setBackgroundBrush(QBrush(self.sleep_color))
+
+                # start another clock
+                self.parent.black_clock_scene.timer.start(1)
+                self.parent.black_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+                self.parent.scene.set_game_state('black')
+        if self.color == 'black':
+            if self.parent.scene.get_game_state() == 'black_clock':
+                # Stop the timer when the scene is clicked
+                self.timer.stop()
+                self.setBackgroundBrush(QBrush(self.sleep_color))
+                # start another clock
+                self.parent.white_clock_scene.timer.start(1)
+                self.parent.white_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+                self.parent.scene.set_game_state('white')
+
+        # Call the base class method to handle other mouse events
+        super().mousePressEvent(event)
+

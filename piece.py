@@ -156,9 +156,9 @@ class Piece(QGraphicsPixmapItem):
 
                         # change sites
                         if self.color == 'white':
-                            self.scene().activePlayer = 'black'
+                            self.scene().activePlayer = 'white_clock'
                         else:
-                            self.scene().activePlayer = 'white'
+                            self.scene().activePlayer = 'black_clock'
 
                 # when move wasn't made, put on the start
                 else:

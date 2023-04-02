@@ -77,7 +77,11 @@ class Chess_Scene(QGraphicsScene):
         self.white_king_position = [(7, 4)]
         self.black_king_position = [(0, 4)]
 
-        # self.pawn_promotion()
+        # clocks
+        self.window = self.parent()
+        self.white_clock = self.window.white_clock_scene
+        self.black_clock = self.window.black_clock_scene
+        print(1)
 
     def contextMenuEvent(self, event):
         """
@@ -175,6 +179,12 @@ class Chess_Scene(QGraphicsScene):
             self.board[int(self.white_king_position[0][1]) * 8 + int(self.white_king_position[0][0])].unhighlight_field()
         else:
             self.board[int(self.black_king_position[0][1]) * 8 + int(self.black_king_position[0][0])].unhighlight_field()
+
+    def get_game_state(self):
+        return self.activePlayer
+
+    def set_game_state(self, game_state):
+        self.activePlayer = game_state
 
     def pawn_promotion(self, position, color):
         # get pawn position
