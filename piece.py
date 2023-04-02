@@ -112,6 +112,18 @@ class Piece(QGraphicsPixmapItem):
                                                       int(self.drag_start_position.x()/100),
                                                       int(new_pos.y()/100),
                                                       int(new_pos.x()/100))
+                        # made castling
+                        self.made_castling()
+                        if self.color == 'white':
+                            if self.scene().chess_board.white_right_castling_available:
+                                self.scene().chess_board.white_right_castling_available = False
+                            if self.scene().chess_board.white_left_castling_available:
+                                self.scene().chess_board.white_left_castling_available = False
+                        else:
+                            if self.scene().chess_board.black_right_castling_available:
+                                self.scene().chess_board.black_right_castling_available = False
+                            if self.scene().chess_board.black_left_castling_available:
+                                self.scene().chess_board.black_left_castling_available = False
                         # checking promotion
                         if self.type == 'Pawn':
                             promotion_pos = self.scene().chess_board.white_promotion if self.color == 'white' else self.scene().chess_board.black_promotion
@@ -148,6 +160,33 @@ class Piece(QGraphicsPixmapItem):
         self.type = type
         self.match_image()
         print(self.type)
+
+    def made_castling(self):
+        if self.color == 'white':
+            if self.scene().chess_board.white_right_castling_done:
+                castling_rook = [item for item in self.scene().items(QPointF(700, 700), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(500, 700))
+                self.scene().chess_board.white_right_castling_done = False
+
+            if self.scene().chess_board.white_left_castling_done:
+                castling_rook = [item for item in self.scene().items(QPointF(0, 700), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(300, 700))
+                self.scene().chess_board.white_left_castling_done = False
+
+        else:
+            if self.scene().chess_board.black_right_castling_done:
+                castling_rook = [item for item in self.scene().items(QPointF(700, 0), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(500, 0))
+                self.scene().chess_board.black_right_castling_done = False
+
+            if self.scene().chess_board.black_left_castling_done:
+                castling_rook = [item for item in self.scene().items(QPointF(0, 0), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(300, 0))
+                self.scene().chess_board.black_left_castling_done = False
 
     def match_image(self):
         match self.type:

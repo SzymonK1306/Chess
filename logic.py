@@ -22,6 +22,29 @@ class ChessLogic:
         self.color = 1
         self.check_now = False
 
+        # castling flags
+        self.white_king_moved = False
+        self.white_right_rook = False
+        self.white_left_rook = False
+
+        self.black_king_moved = False
+        self.black_right_rook = False
+        self.black_left_rook = False
+
+        # flags for highlight move
+        self.white_right_castling_available = False
+        self.white_left_castling_available = False
+
+        self.black_right_castling_available = False
+        self.black_left_castling_available = False
+
+        # flags for qt to made move in GUI
+        self.white_right_castling_done = False
+        self.white_left_castling_done = False
+
+        self.black_right_castling_done = False
+        self.black_left_castling_done = False
+
         self.white_promotion = []
         self.black_promotion = []
 
@@ -35,9 +58,29 @@ class ChessLogic:
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
 
+        # set castling flags
+        if piece == 'K':
+            self.white_king_moved = True
+        if piece == 'k':
+            self.black_king_moved = True
+        if piece == 'R' and startY == 7:
+            self.white_right_rook = True
+        if piece == 'R' and startY == 0:
+            self.white_left_rook = True
+        if piece == 'r' and startY == 7:
+            self.black_right_rook = True
+        if piece == 'r' and startY == 0:
+            self.black_left_rook = True
+
+        print(self.white_left_rook)
+
+        # castling realisation on
+        if piece == 'K' or piece == 'k':
+            self.castling_check(stopY)
+
         white_promotion = np.where(self.board_logic_array[0] == 'P')
         black_promotion = np.where(self.board_logic_array[7] == 'p')
-        print(self.board_logic_array[0])
+        print(self.board_logic_array)
         # print(white_promotion[0])
         if len(white_promotion[0]) != 0:
             self.white_promotion = [white_promotion[0]]
@@ -59,10 +102,10 @@ class ChessLogic:
             if checkmate:
                 color_text = 'Black' if self.color else 'White'
                 message_box = QMessageBox()
+                message_box.setWindowTitle('Checkmate!')
                 message_box.setText("Checkmate! Game over. " + color_text + ' wins')
                 message_box.exec()
 
-        print(self.check_now)
 
     def get_piece_moves(self, row, col):
         """
@@ -79,7 +122,49 @@ class ChessLogic:
         # delete move which will reveal king
         moves = self.check_legal_moves(moves, row, col)
 
+        print(moves)
+
         return moves
+
+    def castling_check(self, stopY):
+        # white right
+        if self.white_right_castling_available and stopY == 6:
+            self.board_logic_array[7, 7] = '.'
+            self.board_logic_array[7, 5] = 'R'
+            self.white_right_castling_done = True
+
+            # white castling impossible
+            self.white_right_castling_available = False
+            self.white_left_castling_available = False
+
+        # white left
+        if self.white_left_castling_available and stopY == 2:
+            self.board_logic_array[7, 0] = '.'
+            self.board_logic_array[7, 3] = 'R'
+            self.white_left_castling_done = True
+
+            # white castling impossible
+            self.white_right_castling_available = False
+            self.white_left_castling_available = False
+        # black right
+        if self.black_right_castling_available and stopY == 6:
+            self.board_logic_array[0, 7] = '.'
+            self.board_logic_array[0, 5] = 'r'
+            self.black_right_castling_done = True
+
+            # black castling impossible
+            self.black_right_castling_available = False
+            self.black_left_castling_available = False
+
+        # black left
+        if self.black_left_castling_available and stopY == 2:
+            self.board_logic_array[0, 0] = '.'
+            self.board_logic_array[0, 3] = 'r'
+            self.black_left_castling_done = True
+
+            # black castling impossible
+            self.black_right_castling_available = False
+            self.black_left_castling_available = False
 
     def single_piece_move(self, piece,  row, col):
         """
@@ -282,6 +367,34 @@ class ChessLogic:
             self.board_logic_array = np.copy(board_backup)
 
         self.board_logic_array = np.copy(board_backup)
+        # Check castling is possible
+        # white
+        if self.color and row == 7 and col == 4:    # white and king is chosen
+            if not self.white_king_moved:
+                # right castling check
+                if not self.white_right_rook and self.board_logic_array[7, 6] == '.' and self.board_logic_array[7, 5] == '.':
+                    if not self.is_square_under_attack((7, 6)) and not self.is_square_under_attack((7, 5)) and not self.is_square_under_attack((7, 4)):
+                        legal_moves.append((7, 6))
+                        self.white_right_castling_available = True
+                # left castling check
+                if not self.white_left_rook and self.board_logic_array[7, 3] == '.' and self.board_logic_array[7, 2] == '.' and self.board_logic_array[7, 1] == '.':
+                    if not self.is_square_under_attack((7, 3)) and not self.is_square_under_attack((7, 2)) and not self.is_square_under_attack((7, 4)):
+                        legal_moves.append((7, 2))
+                        self.white_left_castling_available = True
+
+        # black
+        if not self.color and row == 0 and col == 4:    # black and king is chosen
+            if not self.black_king_moved:
+                # right castling check
+                if not self.black_right_rook and self.board_logic_array[0, 6] == '.' and self.board_logic_array[0, 5] == '.':
+                    if not self.is_square_under_attack((0, 6)) and not self.is_square_under_attack((0, 5)) and not self.is_square_under_attack((0, 4)):
+                        legal_moves.append((0, 6))
+                        self.black_right_castling_available = True
+                # left castling check
+                if not self.black_left_rook and self.board_logic_array[0, 3] == '.' and self.board_logic_array[0, 2] == '.' and self.board_logic_array[0, 1] == '.':
+                    if not self.is_square_under_attack((0, 3)) and not self.is_square_under_attack((0, 2)) and not self.is_square_under_attack((0, 4)):
+                        legal_moves.append((0, 2))
+                        self.black_left_castling_available = True
 
         return legal_moves
 
