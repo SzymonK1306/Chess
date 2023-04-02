@@ -112,6 +112,18 @@ class Piece(QGraphicsPixmapItem):
                                                       int(self.drag_start_position.x()/100),
                                                       int(new_pos.y()/100),
                                                       int(new_pos.x()/100))
+
+                        if self.scene().chess_board.was_en_passant:
+                            if self.color == 'white':
+                                en_passant_pawn = [item for item in self.scene().items(QPointF(new_pos.x(), new_pos.y() + 100), 100, 100)
+                                                   if isinstance(item, Piece)]
+                                self.scene().removeItem(en_passant_pawn[0])
+                                self.scene().chess_board.was_en_passant = False
+                            else:
+                                en_passant_pawn = [item for item in self.scene().items(QPointF(new_pos.x(), new_pos.y() - 100), 100, 100)
+                                                   if isinstance(item, Piece)]
+                                self.scene().removeItem(en_passant_pawn[0])
+                                self.scene().chess_board.was_en_passant = False
                         # made castling
                         self.made_castling()
                         if self.color == 'white':

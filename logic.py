@@ -45,6 +45,10 @@ class ChessLogic:
         self.black_right_castling_done = False
         self.black_left_castling_done = False
 
+        self.en_passant_target = None
+
+        self.was_en_passant = True
+
         self.white_promotion = []
         self.black_promotion = []
 
@@ -54,6 +58,8 @@ class ChessLogic:
         :param startX: int          :param startY: int        :param stopX: int        :param stopY: int
         :return:
         """
+        self.was_en_passant = False
+
         piece = self.board_logic_array[startX, startY]
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
@@ -72,16 +78,42 @@ class ChessLogic:
         if piece == 'r' and startY == 0:
             self.black_left_rook = True
 
-        print(self.white_left_rook)
-
         # castling realisation on
         if piece == 'K' or piece == 'k':
             self.castling_check(stopY)
 
+        if self.en_passant_target is not None:
+            rowEn, colEn = self.en_passant_target
+            if (piece == 'P' and self.board_logic_array[rowEn, colEn] == 'p') or piece == 'p' and self.board_logic_array[rowEn, colEn] == 'P':
+                if (stopX + (1 if piece.isupper() else -1), stopY) == self.en_passant_target:
+                    self.board_logic_array[rowEn, colEn] = '.'
+                    self.was_en_passant = True
+
+        # if piece == 'P' or piece == 'p':
+        #     if self.en_passant_target is not None:
+        #         if self.en_passant_target[1] == stopY:
+        #             if abs(self.en_passant_target[0] - stopX) == 1:
+        #                 self.was_en_passant = True
+        #                 if piece.isupper():
+        #                     self.board_logic_array[self.en_passant_target[0] + 1, self.en_passant_target[1]] = '.'
+        #                 else:
+        #                     self.board_logic_array[self.en_passant_target[0] - 1, self.en_passant_target[1]] = '.'
+
+
+        # en passant
+        self.en_passant_target = None
+
+        # when pawn make double first move
+        if piece == 'P' or piece == 'p':
+            if abs(stopX - startX) > 1:
+                self.en_passant_target = (stopX, stopY)
+
+        print(self.en_passant_target)
+
         white_promotion = np.where(self.board_logic_array[0] == 'P')
         black_promotion = np.where(self.board_logic_array[7] == 'p')
         print(self.board_logic_array)
-        # print(white_promotion[0])
+
         if len(white_promotion[0]) != 0:
             self.white_promotion = [white_promotion[0]]
         if len(black_promotion[0]) != 0:
@@ -222,6 +254,13 @@ class ChessLogic:
         if row + direction >= 0 and row + direction <= 7:
             if self.board_logic_array[row + direction, col] == '.':
                 moves.append((row + direction, col))
+
+        # checking en passant
+        if self.en_passant_target is not None:
+            rowEn, colEn = self.en_passant_target
+            if row == rowEn and (col - 1 == colEn or col + 1 == colEn):
+                moves.append((rowEn + direction, colEn))
+                # self.was_en_passant = True
 
         # Check diagonal capture moves (white)
         if direction == -1:
