@@ -58,15 +58,14 @@ class Clock(QGraphicsScene):
             line.setPos(QPointF(150, 150))
             line.setRotation(i * 6.0)
             self.addItem(line)
-
-        for minute in range(0, 60, 5):
-            angle = math.radians(-6 * minute + 90)
-            x = 110 * math.cos(angle) + 150
-            y = - 110 * math.sin(angle) + 150
-            scaleItem = QGraphicsSimpleTextItem(str(minute))
-            scaleItem.setFont(QFont('Arial', 10))
-            scaleItem.setPos(x - 7, y - 7)
-            self.addItem(scaleItem)
+            if i % 5 == 0:
+                angle = math.radians(-6 * i + 90)
+                x = 110 * math.cos(angle) + 150
+                y = - 110 * math.sin(angle) + 150
+                scaleItem = QGraphicsSimpleTextItem(str(i))
+                scaleItem.setFont(QFont('Arial', 10))
+                scaleItem.setPos(x - 7, y - 7)
+                self.addItem(scaleItem)
 
         # Create timer to update clock every second
         self.timer = QTimer(self)

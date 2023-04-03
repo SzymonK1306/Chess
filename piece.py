@@ -80,15 +80,15 @@ class Piece(QGraphicsPixmapItem):
                 new_pos = QPointF(drop_x * 100, drop_y * 100)
 
                 # check move is correct
-                correct_flag = False
-                for i in range(len(self.possible_moves)):
-                    coordinates = self.possible_moves[i]
-                    if drop_x == coordinates[1] and drop_y == coordinates[0]:
-                        correct_flag = True
-                        break
+                # correct_flag = False
+                # for i in range(len(self.possible_moves)):
+                #     coordinates = self.possible_moves[i]
+                #     if drop_x == coordinates[1] and drop_y == coordinates[0]:
+                #         correct_flag = True
+                #         break
 
                 # when move was correct
-                if correct_flag:
+                if (drop_y, drop_x) in self.possible_moves:
 
                     # unhighlight king field (if move was correct then can not be in check)
                     if self.color == 'black':
@@ -113,6 +113,7 @@ class Piece(QGraphicsPixmapItem):
                                                       int(new_pos.y()/100),
                                                       int(new_pos.x()/100))
 
+                        # en passant in scene
                         if self.scene().chess_board.was_en_passant:
                             if self.color == 'white':
                                 en_passant_pawn = [item for item in self.scene().items(QPointF(new_pos.x(), new_pos.y() + 100), 100, 100)
@@ -124,6 +125,7 @@ class Piece(QGraphicsPixmapItem):
                                                    if isinstance(item, Piece)]
                                 self.scene().removeItem(en_passant_pawn[0])
                                 self.scene().chess_board.was_en_passant = False
+
                         # made castling
                         self.made_castling()
                         if self.color == 'white':
@@ -136,6 +138,7 @@ class Piece(QGraphicsPixmapItem):
                                 self.scene().chess_board.black_right_castling_available = False
                             if self.scene().chess_board.black_left_castling_available:
                                 self.scene().chess_board.black_left_castling_available = False
+
                         # checking promotion
                         if self.type == 'Pawn':
                             promotion_pos = self.scene().chess_board.white_promotion if self.color == 'white' else self.scene().chess_board.black_promotion
