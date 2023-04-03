@@ -16,6 +16,8 @@ class Form(QtWidgets.QMainWindow):
 
         uic.loadUi('mainWindow.ui', self)
 
+        self.setWindowTitle('Chess')
+
         # find elements in .ui
         self.main_graphic = self.findChild(QGraphicsView, 'main_graphic')
 
@@ -30,8 +32,6 @@ class Form(QtWidgets.QMainWindow):
 
         validator = QRegExpValidator(regex, self.chess_notation_line)
         self.chess_notation_line.setValidator(validator)
-
-        self.chess_notation_line
 
         self.chess_notation_button.clicked.connect(self.chess_notation)
 

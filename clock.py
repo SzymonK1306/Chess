@@ -69,9 +69,15 @@ class Clock(QGraphicsScene):
 
         # Create timer to update clock every second
         self.timer = QTimer(self)
+        self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateClock)
         if self.color == 'white':
             self.timer.start(1)
+
+        # set initial time on clock face
+        self.secondHand.setRotation(-self.gameTime.second() * 6.0)
+        self.minuteHand.setRotation(-self.gameTime.minute() * 6.0 + - self.gameTime.second() / 10.0)
+        self.millisecondHand.setRotation(-self.gameTime.msec() * 0.36)
 
 
     def updateClock(self):

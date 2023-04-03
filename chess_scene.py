@@ -36,7 +36,6 @@ class Chess_Scene(QGraphicsScene):
         self.white_rooks = [Piece('white', 'Rook', 0, 700), Piece('white', 'Rook', 700, 700)]
         self.white_queens = [Piece('white', 'Queen',  300, 700)]
         self.white_king = Piece('white', 'King', 400, 700)
-        # print(type(self.white_king))
 
         # black pieces
         self.black_pawns = [Piece('black', 'Pawn', 100 * i, 100) for i in range(8)]
@@ -81,7 +80,6 @@ class Chess_Scene(QGraphicsScene):
         self.window = self.parent()
         self.white_clock = self.window.white_clock_scene
         self.black_clock = self.window.black_clock_scene
-        print(1)
 
     def contextMenuEvent(self, event):
         """
@@ -232,7 +230,6 @@ class Chess_Scene(QGraphicsScene):
             if (stop_row, stop_col) in possible_moves and active_piece == self.chess_board.board_logic_array[start_row, start_col]:
                 self.chess_board.move(start_row, start_col, stop_row, stop_col)
                 self.move_in_scene(start_row, start_col, stop_row, stop_col)
-                print(self.chess_board.board_logic_array)
             else:
                 move_message_box = QMessageBox()
                 move_message_box.setWindowTitle("Incorrect move!")
@@ -280,7 +277,6 @@ class Chess_Scene(QGraphicsScene):
                 start_row, start_col]:
                 self.chess_board.move(start_row, start_col, stop_row, stop_col)
                 self.move_in_scene(start_row, start_col, stop_row, stop_col)
-                print(self.chess_board.board_logic_array)
             else:
                 move_message_box = QMessageBox()
                 move_message_box.setWindowTitle("Incorrect move!")
@@ -288,7 +284,6 @@ class Chess_Scene(QGraphicsScene):
                 move_message_box.setText("Move was incorrect. Try again")
                 move_message_box.setStandardButtons(QMessageBox.Ok)
                 move_message_box.exec()
-
 
     def move_in_scene(self, start_row, start_col, stop_row, stop_col):
         if self.activePlayer == 'black':

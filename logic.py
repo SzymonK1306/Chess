@@ -16,8 +16,6 @@ class ChessLogic:
                                            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
                                            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']])
 
-        print(self.board_logic_array)
-
         # color of active player
         self.color = 1
         self.check_now = False
@@ -108,11 +106,8 @@ class ChessLogic:
             if abs(stopX - startX) > 1:
                 self.en_passant_target = (stopX, stopY)
 
-        print(self.en_passant_target)
-
         white_promotion = np.where(self.board_logic_array[0] == 'P')
         black_promotion = np.where(self.board_logic_array[7] == 'p')
-        print(self.board_logic_array)
 
         if len(white_promotion[0]) != 0:
             self.white_promotion = [white_promotion[0]]
@@ -153,8 +148,6 @@ class ChessLogic:
 
         # delete move which will reveal king
         moves = self.check_legal_moves(moves, row, col)
-
-        print(moves)
 
         return moves
 
@@ -230,9 +223,9 @@ class ChessLogic:
         piece = self.board_logic_array[row, col]
 
         # Check if the piece is a Pawn
-        if piece != 'P' and piece != 'p':
-            print("Invalid selection: selected piece is not a Pawn.")
-            return moves
+        # if piece != 'P' and piece != 'p':
+        #     print("Invalid selection: selected piece is not a Pawn.")
+        #     return moves
 
         # Check if the Pawn is white or black
         if piece.isupper():
@@ -533,10 +526,4 @@ class ChessLogic:
                     self.board_logic_array[x][y] = 'N'
                 else:
                     self.board_logic_array[x][y] = 'n'
-
-        print(self.board_logic_array)
-
-    # def get_all_possible_moves(self, x, y):
-
-
 
