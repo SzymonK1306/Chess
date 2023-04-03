@@ -1,10 +1,11 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QLabel, QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsPixmapItem
-from PyQt5.QtCore import QFile, QObject, Qt
+from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QLabel, QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsPixmapItem, QGraphicsTextItem
+from PyQt5.QtCore import QFile, QObject, Qt, QResource, QRegExp
 from PyQt5 import QtWidgets, uic
 from PySide6.QtUiTools import QUiLoader
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor, QRegExpValidator
 from chess_scene import Chess_Scene
+from clock import Clock
 import data_rc
 
 
@@ -17,17 +18,50 @@ class Form(QtWidgets.QMainWindow):
 
         # find elements in .ui
         self.main_graphic = self.findChild(QGraphicsView, 'main_graphic')
-        self.title_label = self.findChild(QLabel, 'title_label')
+
+        self.white_clock_view = self.findChild(QGraphicsView, 'white_clock_view')
+        self.black_clock_view = self.findChild(QGraphicsView, 'black_clock_view')
+
+        # notation reading elements
+        self.chess_notation_line = self.findChild(QLineEdit, 'chess_notation_edit')
+        self.chess_notation_button = self.findChild(QPushButton, 'chess_notation_button')
+
+        regex = QRegExp("^([KQNBRAH]?[A-Ha-h][1-8]-[a-h][1-8])$")
+
+        validator = QRegExpValidator(regex, self.chess_notation_line)
+        self.chess_notation_line.setValidator(validator)
+
+        self.chess_notation_line
+
+        self.chess_notation_button.clicked.connect(self.chess_notation)
+
+        self.white_clock_scene = Clock('white', self)
+        self.black_clock_scene = Clock('black', self)
+
+        self.white_clock_view.setScene(self.white_clock_scene)
+        self.black_clock_view.setScene(self.black_clock_scene)
+        # self.title_label = self.findChild(QLabel, 'title_label')
+        # RC file
+        # QResource.registerResource("images/data.qrc")
+
+        # create the icon object
+        icon = QIcon("images/red_king.png")
+
+        # set the application icon
+        QApplication.setWindowIcon(icon)
 
         # scene creation
-        self.scene = Chess_Scene()
+        self.scene = Chess_Scene(self)
 
         # initial board state
         self.scene.init_board()
 
         self.main_graphic.setScene(self.scene)
 
-        print('Dodalem scene')
+    def chess_notation(self):
+        chess_notation_text = self.chess_notation_line.text()
+        self.scene.use_chess_notation(chess_notation_text)
+        self.chess_notation_line.clear()
 
 
 if __name__ == '__main__':
