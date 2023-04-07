@@ -344,23 +344,7 @@ class ChessLogic:
             return [(x[0], x[1]) for x in validPos[:firstNonEmpty].tolist()]
 
     def get_queen_moves(self, current_pos):
-        x, y = current_pos
-        queen_moves = []
-        color = self.board_logic_array[x][y].islower()
-
-        # Check all 8 directions
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
-            i, j = x + dx, y + dy
-            while 0 <= i < 8 and 0 <= j < 8:
-                if self.board_logic_array[i][j] == '.':
-                    queen_moves.append((i, j))
-                elif self.board_logic_array[i][j].islower() == color:
-                    break
-                else:
-                    queen_moves.append((i, j))
-                    break
-                i += dx
-                j += dy
+        queen_moves = self.get_bishop_moves(current_pos) + self.get_rook_moves(current_pos)
         return queen_moves
 
     def get_king_moves(self, current_pos):
