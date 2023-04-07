@@ -356,12 +356,8 @@ class ChessLogic:
         moves = [(row + i, col + j) for i in [-1, 0, 1] for j in [-1, 0, 1] if (i, j) != (0, 0)]
 
         # Filter out any moves that are not valid
-        valid_moves = []
-        for r, c in moves:
-            if 0 <= r < 8 and 0 <= c < 8:  # Make sure the move is within the board
-                if self.board_logic_array[r, c] == '.' or self.board_logic_array[r, c].isupper() != color:  # Make sure the square is not occupied by a piece of the same color
-                    valid_moves.append((r, c))
-
+        valid_moves = [(r, c) for r, c in moves if 0 <= r < 8 and 0 <= c < 8 and (self.board_logic_array[r, c] == '.'
+                                                                                  or self.board_logic_array[r, c].isupper() != color)]
         return valid_moves
 
     def check_legal_moves(self, moves, row, col):
