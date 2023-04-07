@@ -282,39 +282,43 @@ class ChessLogic:
         """
         row, col = pos
 
-        moves = []
+        # moves = []
 
         # Check all possible moves for the knight
-        for dr, dc in [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]:
-            new_row, new_col = row + dr, col + dc
-
-            # Check if the new position is on the board
-            if 0 <= new_row < 8 and 0 <= new_col < 8:
-                # Check if the new position is not occupied by a piece of the same color
-                if self.board_logic_array[new_row][new_col] == '.' or (self.board_logic_array[new_row][new_col].isupper() ^ color):
-                    moves.append((new_row, new_col))
+        # for dr, dc in [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]:
+        #     new_row, new_col = row + dr, col + dc
+        #
+        #     # Check if the new position is on the board
+        #     if 0 <= new_row < 8 and 0 <= new_col < 8:
+        #         # Check if the new position is not occupied by a piece of the same color
+        #         if self.board_logic_array[new_row][new_col] == '.' or (self.board_logic_array[new_row][new_col].isupper() ^ color):
+        #             moves.append((new_row, new_col))
+        moves = [(new_row, new_col) for dr, dc in
+                 [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]
+                 for new_row, new_col in [(row + dr, col + dc)]
+                 if 0 <= new_row < 8 and 0 <= new_col < 8 and (self.board_logic_array[new_row][new_col] == '.' or (
+                        self.board_logic_array[new_row][new_col].isupper() ^ color))]
 
         return moves
 
     def get_bishop_moves(self, current_pos):
         x, y = current_pos
-        bishop_moves = []
-        color = self.board_logic_array[x][y].islower()
+
+        directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
 
         # Check all 4 diagonal directions
-        for dx, dy in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
-            i, j = x + dx, y + dy
-            while 0 <= i < 8 and 0 <= j < 8:
-                if self.board_logic_array[i][j] == '.':
-                    bishop_moves.append((i, j))
-                elif self.board_logic_array[i][j].islower() == color:
-                    break
-                else:
-                    bishop_moves.append((i, j))
-                    break
-                i += dx
-                j += dy
+        bishop_moves = [move for shift in directions for move in self.avoid_loop_bishop(self.board_logic_array[x, y], x, y, *shift)]
+
         return bishop_moves
+
+    def avoid_loop_bishop(self, piece, x, y, dx, dy):
+        validPos = [(x + i * dx, y + i * dy)
+                    for i in range(1, 8)
+                    if 0 <= x + i * dx < 8 and 0 <= y + i * dy < 8 and (self.board_logic_array[x + i * dx, y + i * dy] == '.'
+                    or self.board_logic_array[x + i * dx, y + i * dy].isupper() != piece.isupper())
+                    and not any(self.board_logic_array[x + j * dx, y + j * dy] != '.' for j in range(1, i))]
+
+        return validPos
 
     def get_rook_moves(self, current_pos):
         x, y = current_pos
