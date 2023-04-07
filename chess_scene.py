@@ -133,11 +133,12 @@ class Chess_Scene(QGraphicsScene):
         :param possible_moves: list of tuples
         :return:
         """
-        for i in range(len(possible_moves)):
-            coordinates = possible_moves[i]
-
-            # inverse coordinates due to numpy array to screen
-            self.board[int(coordinates[1]) * 8 + int(coordinates[0])].highlight_field()
+        [self.board[single_field[1] * 8 + single_field[0]].highlight_field() for single_field in possible_moves]
+        # for i in range(len(possible_moves)):
+        #     coordinates = possible_moves[i]
+        #
+        #     # inverse coordinates due to numpy array to screen
+        #     self.board[int(coordinates[1]) * 8 + int(coordinates[0])].highlight_field()
 
     def unhighlight_moves(self, possible_moves):
         """
@@ -145,11 +146,12 @@ class Chess_Scene(QGraphicsScene):
         :param possible_moves: list of tuples
         :return:
         """
-        for i in range(len(possible_moves)):
-            coordinates = possible_moves[i]
-
-            # inverse coordinates due to numpy array to screen
-            self.board[int(coordinates[1]) * 8 + int(coordinates[0])].unhighlight_field()
+        [self.board[single_field[1] * 8 + single_field[0]].unhighlight_field() for single_field in possible_moves]
+        # for i in range(len(possible_moves)):
+        #     coordinates = possible_moves[i]
+        #
+        #     # inverse coordinates due to numpy array to screen
+        #     self.board[int(coordinates[1]) * 8 + int(coordinates[0])].unhighlight_field()
 
     def check_highlight(self, color):
         """

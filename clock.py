@@ -52,20 +52,21 @@ class Clock(QGraphicsScene):
         self.addItem(self.millisecondHand)
 
         # Create minute markers
-        for i in range(60):
-            line = QGraphicsLineItem(0, -120, 0, -125)
-            line.setPen(QPen(Qt.black, 3))
-            line.setPos(QPointF(150, 150))
-            line.setRotation(i * 6.0)
-            self.addItem(line)
-            if i % 5 == 0:
-                angle = math.radians(-6 * i + 90)
-                x = 110 * math.cos(angle) + 150
-                y = - 110 * math.sin(angle) + 150
-                scaleItem = QGraphicsSimpleTextItem(str(i))
-                scaleItem.setFont(QFont('Arial', 10))
-                scaleItem.setPos(x - 7, y - 7)
-                self.addItem(scaleItem)
+        [self.draw_face(i) for i in range(60)]
+        # for i in range(60):
+        #     line = QGraphicsLineItem(0, -120, 0, -125)
+        #     line.setPen(QPen(Qt.black, 3))
+        #     line.setPos(QPointF(150, 150))
+        #     line.setRotation(i * 6.0)
+        #     self.addItem(line)
+        #     if i % 5 == 0:
+        #         angle = math.radians(-6 * i + 90)
+        #         x = 110 * math.cos(angle) + 150
+        #         y = - 110 * math.sin(angle) + 150
+        #         scaleItem = QGraphicsSimpleTextItem(str(i))
+        #         scaleItem.setFont(QFont('Arial', 10))
+        #         scaleItem.setPos(x - 7, y - 7)
+        #         self.addItem(scaleItem)
 
         # Create timer to update clock every second
         self.timer = QTimer(self)
@@ -125,4 +126,19 @@ class Clock(QGraphicsScene):
 
         # Call the base class method to handle other mouse events
         super().mousePressEvent(event)
+
+    def draw_face(self, i):
+        line = QGraphicsLineItem(0, -120, 0, -125)
+        line.setPen(QPen(Qt.black, 3))
+        line.setPos(QPointF(150, 150))
+        line.setRotation(i * 6.0)
+        self.addItem(line)
+        if i % 5 == 0:
+            angle = math.radians(-6 * i + 90)
+            x = 110 * math.cos(angle) + 150
+            y = - 110 * math.sin(angle) + 150
+            scaleItem = QGraphicsSimpleTextItem(str(i))
+            scaleItem.setFont(QFont('Arial', 10))
+            scaleItem.setPos(x - 7, y - 7)
+            self.addItem(scaleItem)
 
