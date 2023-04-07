@@ -282,17 +282,6 @@ class ChessLogic:
         """
         row, col = pos
 
-        # moves = []
-
-        # Check all possible moves for the knight
-        # for dr, dc in [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]:
-        #     new_row, new_col = row + dr, col + dc
-        #
-        #     # Check if the new position is on the board
-        #     if 0 <= new_row < 8 and 0 <= new_col < 8:
-        #         # Check if the new position is not occupied by a piece of the same color
-        #         if self.board_logic_array[new_row][new_col] == '.' or (self.board_logic_array[new_row][new_col].isupper() ^ color):
-        #             moves.append((new_row, new_col))
         moves = [(new_row, new_col) for dr, dc in
                  [(2, 1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (-1, -2), (1, -2), (2, -1)]
                  for new_row, new_col in [(row + dr, col + dc)]
@@ -322,23 +311,37 @@ class ChessLogic:
 
     def get_rook_moves(self, current_pos):
         x, y = current_pos
-        rook_moves = []
-        color = self.board_logic_array[x][y].islower()
+        rook_directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        rook_moves = [move for shift in rook_directions for move in self.avoid_loop_rook(self.board_logic_array[x, y], x, y, shift)]
+        # color = self.board_logic_array[x][y].islower()
 
         # Check all 4 directions
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            i, j = x + dx, y + dy
-            while 0 <= i < 8 and 0 <= j < 8:
-                if self.board_logic_array[i][j] == '.':
-                    rook_moves.append((i, j))
-                elif self.board_logic_array[i][j].islower() == color:
-                    break
-                else:
-                    rook_moves.append((i, j))
-                    break
-                i += dx
-                j += dy
+        # for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        #     i, j = x + dx, y + dy
+        #     while 0 <= i < 8 and 0 <= j < 8:
+        #         if self.board_logic_array[i][j] == '.':
+        #             rook_moves.append((i, j))
+        #         elif self.board_logic_array[i][j].islower() == color:
+        #             break
+        #         else:
+        #             rook_moves.append((i, j))
+        #             break
+        #         i += dx
+        #         j += dy
         return rook_moves
+
+    def avoid_loop_rook(self, piece, x, y, shift):
+        allInd = np.array([(i * shift[0] + x, i * shift[1] + y) for i in range(1, 8)])
+        validInd = np.all((allInd >= 0) & (allInd < 8), axis=1)
+        validPos = allInd[validInd]
+
+        targetPieces = [self.board_logic_array[pos[0], pos[1]] for pos in validPos]
+        firstNonEmpty = next((i for i, p in enumerate(targetPieces) if p != '.'), len(targetPieces))
+
+        if firstNonEmpty < len(targetPieces) and targetPieces[firstNonEmpty].isupper() != piece.isupper():
+            return [(x[0], x[1]) for x in validPos[:firstNonEmpty + 1].tolist()]
+        else:
+            return [(x[0], x[1]) for x in validPos[:firstNonEmpty].tolist()]
 
     def get_queen_moves(self, current_pos):
         x, y = current_pos
