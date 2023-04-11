@@ -1,13 +1,11 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QLabel, QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsPixmapItem, QGraphicsTextItem
-from PyQt5.QtCore import QFile, QObject, Qt, QResource, QRegExp
+from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QGraphicsView, QRadioButton
+from PyQt5.QtCore import QRegExp
 from PyQt5 import QtWidgets, uic
-from PySide6.QtUiTools import QUiLoader
-from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor, QRegExpValidator
+from PyQt5.QtGui import QIcon, QRegExpValidator
 from chess_scene import Chess_Scene
 from clock import Clock
-from promotion import PromotionDialog
-import data_rc
+from config import ConfigWindow
 
 
 class Form(QtWidgets.QMainWindow):
@@ -59,10 +57,46 @@ class Form(QtWidgets.QMainWindow):
 
         self.main_graphic.setScene(self.scene)
 
+        # game config dialog
+        self.game_mode = None
+
+        self.config_dialog = ConfigWindow(self)
+        self.config_dialog.exec()
+
+        print(self.game_mode)
+
     def chess_notation(self):
         chess_notation_text = self.chess_notation_line.text()
         self.scene.use_chess_notation(chess_notation_text)
         self.chess_notation_line.clear()
+
+    # def open_dialog(self):
+    #     # Load the dialog UI file
+    #     dialog = uic.loadUi('config.ui')
+    #
+    #     dialog.radio_button_single = dialog.findChild(QRadioButton, 'radioButton_single')
+    #     dialog.radio_button_two = dialog.findChild(QRadioButton, 'radioButton_two')
+    #     dialog.radio_button_ai = dialog.findChild(QRadioButton, 'radioButton_ai')
+    #
+    #     dialog.save_button = dialog.findChild(QPushButton, 'start_button_game')
+    #     dialog.save_button.clicked.connect(lambda: self.save_radio_selection(dialog))
+    #     # Show the dialog
+    #     dialog.exec()
+    #
+    # def save_radio_selection(self, dialog):
+    #     # Find which radio button is checked and save the selection
+    #     if dialog.radio_button_single.isChecked():
+    #         selection = 'Single player selected'
+    #     elif dialog.radio_button_two.isChecked():
+    #         selection = 'Two players selected'
+    #     elif dialog.radio_button_ai.isChecked():
+    #         selection = 'AI selected'
+    #     else:
+    #         selection = 'No radio button selected'
+    #     # Print the selection (you could also save it to a file or database)
+    #     print(selection)
+    #     # Close the dialog
+    #     dialog.close()
 
 
 if __name__ == '__main__':

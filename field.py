@@ -4,7 +4,6 @@ from piece import Piece
 from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 
-# King class
 class Field(QGraphicsPixmapItem):
     def __init__(self, x, y):
         super().__init__()
