@@ -6,6 +6,7 @@ from PySide6.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor, QRegExpValidator
 from chess_scene import Chess_Scene
 from clock import Clock
+from promotion import PromotionDialog
 import data_rc
 
 

@@ -222,11 +222,6 @@ class ChessLogic:
         moves = []
         piece = self.board_logic_array[row, col]
 
-        # Check if the piece is a Pawn
-        # if piece != 'P' and piece != 'p':
-        #     print("Invalid selection: selected piece is not a Pawn.")
-        #     return moves
-
         # Check if the Pawn is white or black
         if piece.isupper():
             direction = -1  # White Pawns move up the board
@@ -296,7 +291,7 @@ class ChessLogic:
         directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
 
         # Check all 4 diagonal directions
-        bishop_moves = [move for shift in directions for move in self.avoid_loop_bishop(self.board_logic_array[x, y], x, y, *shift)]
+        bishop_moves = [move for dir in directions for move in self.avoid_loop_bishop(self.board_logic_array[x, y], x, y, dir[0], dir[1])]
 
         return bishop_moves
 
@@ -312,36 +307,22 @@ class ChessLogic:
     def get_rook_moves(self, current_pos):
         x, y = current_pos
         rook_directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
-        rook_moves = [move for shift in rook_directions for move in self.avoid_loop_rook(self.board_logic_array[x, y], x, y, shift)]
-        # color = self.board_logic_array[x][y].islower()
+        rook_moves = [move for dir in rook_directions for move in self.avoid_loop_rook(self.board_logic_array[x, y], x, y, dir[0], dir[1])]
 
-        # Check all 4 directions
-        # for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        #     i, j = x + dx, y + dy
-        #     while 0 <= i < 8 and 0 <= j < 8:
-        #         if self.board_logic_array[i][j] == '.':
-        #             rook_moves.append((i, j))
-        #         elif self.board_logic_array[i][j].islower() == color:
-        #             break
-        #         else:
-        #             rook_moves.append((i, j))
-        #             break
-        #         i += dx
-        #         j += dy
         return rook_moves
 
-    def avoid_loop_rook(self, piece, x, y, shift):
-        allInd = np.array([(i * shift[0] + x, i * shift[1] + y) for i in range(1, 8)])
-        validInd = np.all((allInd >= 0) & (allInd < 8), axis=1)
-        validPos = allInd[validInd]
+    def avoid_loop_rook(self, piece, x, y, dir_x, dir_y):
+        line_array = np.array([(i * dir_x + x, i * dir_y + y) for i in range(1, 8)])
+        valid_ind = np.all((line_array >= 0) & (line_array < 8), axis=1)
+        valid_pos = line_array[valid_ind]
 
-        targetPieces = [self.board_logic_array[pos[0], pos[1]] for pos in validPos]
-        firstNonEmpty = next((i for i, p in enumerate(targetPieces) if p != '.'), len(targetPieces))
+        target_pieces = [self.board_logic_array[pos[0], pos[1]] for pos in valid_pos]
+        first_non_empty = next((i for i, p in enumerate(target_pieces) if p != '.'), len(target_pieces))
 
-        if firstNonEmpty < len(targetPieces) and targetPieces[firstNonEmpty].isupper() != piece.isupper():
-            return [(x[0], x[1]) for x in validPos[:firstNonEmpty + 1].tolist()]
+        if first_non_empty < len(target_pieces) and target_pieces[first_non_empty].isupper() != piece.isupper():
+            return [(x[0], x[1]) for x in valid_pos[:first_non_empty + 1].tolist()]
         else:
-            return [(x[0], x[1]) for x in validPos[:firstNonEmpty].tolist()]
+            return [(x[0], x[1]) for x in valid_pos[:first_non_empty].tolist()]
 
     def get_queen_moves(self, current_pos):
         queen_moves = self.get_bishop_moves(current_pos) + self.get_rook_moves(current_pos)
@@ -370,22 +351,13 @@ class ChessLogic:
         legal_moves = []
 
         # make a copy of board
-        board_backup = np.copy(self.board_logic_array)
+        self.board_backup = np.copy(self.board_logic_array)
 
         # check move
-        for move in moves:
+        legal_moves = [self.move_checking(row, col, move[0], move[1]) for move in moves if self.move_checking(row, col, move[0], move[1]) is not None]
 
-            # make test move
-            self.test_move(row, col, move[0], move[1])
+        self.board_logic_array = np.copy(self.board_backup)
 
-            # if there is no check, it is legal
-            if not self.is_in_check():
-                legal_moves.append(move)
-
-            # restore original board
-            self.board_logic_array = np.copy(board_backup)
-
-        self.board_logic_array = np.copy(board_backup)
         # Check castling is possible
         # white
         if self.color and row == 7 and col == 4:    # white and king is chosen
@@ -416,6 +388,24 @@ class ChessLogic:
                         self.black_left_castling_available = True
 
         return legal_moves
+
+    def move_checking(self, row, col, start, stop):
+        legal = False
+
+        # make test move
+        self.test_move(row, col, start, stop)
+
+        # if there is no check, it is legal
+        if not self.is_in_check():
+            legal = True
+
+        # restore original board
+        self.board_logic_array = np.copy(self.board_backup)
+
+        if legal:
+            return (start, stop)
+        else:
+            return None
 
     def is_square_under_attack(self, position):
         """
@@ -476,18 +466,6 @@ class ChessLogic:
         piece = self.board_logic_array[startX, startY]
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
-
-    def is_my_square_under_attack(self, position):
-        # color white -> 1 black -> 0
-        for x, y in itertools.product(range(8), range(8)):
-            piece = self.board_logic_array[x][y]
-
-            if piece != '.' and piece.isupper() != self.color:
-                moves = self.single_piece_move(piece, x, y)
-
-                if (position[0], position[1]) in moves:
-                    return True
-        return False
 
     def pawn_promotion(self, x, y, chosen_piece):
         pawn = self.board_logic_array[x][y]
