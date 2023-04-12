@@ -50,6 +50,9 @@ class ChessLogic:
         self.white_promotion = []
         self.black_promotion = []
 
+        self.history_list = []
+        self.column_array = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
+
     def move(self, startX, startY, stopX, stopY):
         """
         Make move on array board
@@ -61,6 +64,15 @@ class ChessLogic:
         piece = self.board_logic_array[startX, startY]
         self.board_logic_array[startX, startY] = '.'
         self.board_logic_array[stopX, stopY] = piece
+
+        start_col = self.column_array[startY]
+        start_row = str(8 - startX)
+
+        stop_col = self.column_array[stopY]
+        stop_row = str(8 - stopX)
+
+        self.history_list.append(start_col + start_row + '-' + stop_col + stop_row)
+        print(self.history_list)
 
         # set castling flags
         if piece == 'K':

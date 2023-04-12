@@ -29,7 +29,7 @@ class ConfigWindow(QDialog):
         self.port_edit = self.findChild(QLineEdit, 'port_edit')
 
         # IP mask
-        self.IP_edit.setText("127.0.0.1")
+        self.IP_edit.setText("127.  0.  0.  1")
         self.IP_edit.setInputMask("000.000.000.000")
 
         # port mask

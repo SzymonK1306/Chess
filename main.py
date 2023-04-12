@@ -1,11 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QGraphicsView, QRadioButton
+from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QGraphicsView, QRadioButton, QMenuBar, QMenu, QAction
 from PyQt5.QtCore import QRegExp
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QRegExpValidator
 from chess_scene import Chess_Scene
 from clock import Clock
 from config import ConfigWindow
+import sqlite3
+import uuid
+import time
+import xml.etree.ElementTree as ET
 
 
 class Form(QtWidgets.QMainWindow):
@@ -63,7 +67,59 @@ class Form(QtWidgets.QMainWindow):
         self.config_dialog = ConfigWindow(self)
         self.config_dialog.exec()
 
+        # menu bar
+        menu_bar = self.menuBar()
+
+        # Create a QMenu and add it to the menu bar
+        menu_history = QMenu("History", self)
+        menu_bar.addMenu(menu_history)
+
+        # Create two QAction objects and add them to the QMenu
+        sql_action_save = QAction("Save to SQLite3", self)
+        xml_action_save = QAction("Save to XML file", self)
+        menu_history.addAction(sql_action_save)
+        menu_history.addAction(xml_action_save)
+
+        # Connect the triggered signal of each QAction to its respective function
+        sql_action_save.triggered.connect(self.sql_save)
+        xml_action_save.triggered.connect(self.xml_save)
+
         print(self.game_mode)
+
+    def sql_save(self):
+        conn = sqlite3.connect('chess_game.db')
+        c = conn.cursor()
+
+        c.execute('''CREATE TABLE IF NOT EXISTS moves 
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 game_id TEXT,
+                 game_start_time INTEGER,
+                 move TEXT)''')
+
+        game_start_time = int(time.time())
+        game_id = str(game_start_time)  # generate a unique ID for the game
+
+        moves_list = self.scene.chess_board.history_list
+
+        for move_string in moves_list:
+            c.execute("INSERT INTO moves (game_id, game_start_time, move) VALUES (?, ?, ?)", (game_id, game_start_time, move_string))
+
+        conn.commit()
+        conn.close()
+
+    def xml_save(self):
+        # Create the root element of the XML file
+        root = ET.Element('game')
+
+        moves = self.scene.chess_board.history_list
+
+        # Add a child element for each move
+        for move in moves:
+            ET.SubElement(root, 'move').text = move
+
+        # Create an ElementTree object and write it to a file
+        tree = ET.ElementTree(root)
+        tree.write('chess_game.xml')
 
     def chess_notation(self):
         chess_notation_text = self.chess_notation_line.text()
