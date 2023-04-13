@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QGraphicsView, QRadioButton, QMenuBar, QMenu, QAction
+from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QGraphicsView, QRadioButton, QMenuBar, QMenu, QAction, \
+    QMessageBox
 from PyQt5.QtCore import QRegExp
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QRegExpValidator
@@ -10,6 +11,7 @@ import sqlite3
 import uuid
 import time
 import xml.etree.ElementTree as ET
+import xml.dom.minidom as minidom
 
 
 class Form(QtWidgets.QMainWindow):
@@ -63,6 +65,8 @@ class Form(QtWidgets.QMainWindow):
 
         # game config dialog
         self.game_mode = None
+        self.IP_address = None
+        self.port = None
 
         self.config_dialog = ConfigWindow(self)
         self.config_dialog.exec()
@@ -85,6 +89,8 @@ class Form(QtWidgets.QMainWindow):
         xml_action_save.triggered.connect(self.xml_save)
 
         print(self.game_mode)
+        print(self.IP_address)
+        print(self.port)
 
     def sql_save(self):
         conn = sqlite3.connect('chess_game.db')
@@ -107,6 +113,11 @@ class Form(QtWidgets.QMainWindow):
         conn.commit()
         conn.close()
 
+        message_box = QMessageBox()
+        message_box.setWindowTitle('Success')
+        message_box.setText('History saved successfully')
+        message_box.exec()
+
     def xml_save(self):
         # Create the root element of the XML file
         root = ET.Element('game')
@@ -117,9 +128,18 @@ class Form(QtWidgets.QMainWindow):
         for move in moves:
             ET.SubElement(root, 'move').text = move
 
-        # Create an ElementTree object and write it to a file
-        tree = ET.ElementTree(root)
-        tree.write('chess_game.xml')
+        # Create a pretty XML
+        xml_str = ET.tostring(root, encoding='utf-8', method='xml')
+        dom = minidom.parseString(xml_str)
+        pretty_xml_str = dom.toprettyxml(indent='  ')
+
+        with open('chess_game.xml', 'w') as f:
+            f.write(pretty_xml_str)
+
+        message_box = QMessageBox()
+        message_box.setWindowTitle('Success')
+        message_box.setText('History saved successfully')
+        message_box.exec()
 
     def chess_notation(self):
         chess_notation_text = self.chess_notation_line.text()
