@@ -1,1 +1,5 @@
-<game><move>e2-e4</move><move>d7-d5</move><move>g1-f3</move></game>
+<?xml version="1.0" ?>
+<game>
+  <move>f2-f4</move>
+  <move>e7-e5</move>
+</game>
