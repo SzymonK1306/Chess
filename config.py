@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QDialog, QPushButton, QRadioButton, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QDialog, QPushButton, QRadioButton, QLineEdit, QMessageBox, QComboBox
 from PyQt5 import uic
 from PyQt5.QtCore import Qt, QRegExp
 import json
+import sqlite3
 from PyQt5.QtGui import QRegExpValidator, QIntValidator
 
 
@@ -34,6 +35,32 @@ class ConfigWindow(QDialog):
         self.load_button = self.findChild(QPushButton, 'load_options_button')
         self.load_button.clicked.connect(self.load_from_json)
 
+        # load history
+        self.history_button = self.findChild(QPushButton, 'load_history_button')
+        self.history_button.clicked.connect(self.load_history)
+
+        # comboBox
+        self.combo = self.findChild(QComboBox, 'comboBox')
+
+        # load saved histories
+        conn = sqlite3.connect('chess_game.db')
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT DISTINCT game_id FROM moves")
+
+        # Fetch all the dates from the query result
+        dates = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        dates = [date[0] for date in dates]
+
+        for date in dates:
+            self.combo.addItem('Saved in SQL: ' + date)
+
+        self.combo.addItem('Saved in XML: chess_game.xml')
+
         # LineEdit
         self.IP_edit = self.findChild(QLineEdit, 'IP_edit')
         self.port_edit = self.findChild(QLineEdit, 'port_edit')
@@ -45,6 +72,9 @@ class ConfigWindow(QDialog):
         # port mask
         self.port_edit.setText("55555")
         self.port_edit.setInputMask("00000")
+
+    def load_history(self):
+        pass
 
     def load_from_json(self):
         with open('game_options.json') as f:

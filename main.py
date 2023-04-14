@@ -10,6 +10,7 @@ from config import ConfigWindow
 import sqlite3
 import uuid
 import time
+import datetime
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 
@@ -88,10 +89,6 @@ class Form(QtWidgets.QMainWindow):
         sql_action_save.triggered.connect(self.sql_save)
         xml_action_save.triggered.connect(self.xml_save)
 
-        print(self.game_mode)
-        print(self.IP_address)
-        print(self.port)
-
     def sql_save(self):
         conn = sqlite3.connect('chess_game.db')
         c = conn.cursor()
@@ -99,16 +96,15 @@ class Form(QtWidgets.QMainWindow):
         c.execute('''CREATE TABLE IF NOT EXISTS moves 
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                  game_id TEXT,
-                 game_start_time INTEGER,
                  move TEXT)''')
 
-        game_start_time = int(time.time())
-        game_id = str(game_start_time)  # generate a unique ID for the game
+        current_time = datetime.datetime.now()
+        time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")    # time is game id
 
         moves_list = self.scene.chess_board.history_list
 
         for move_string in moves_list:
-            c.execute("INSERT INTO moves (game_id, game_start_time, move) VALUES (?, ?, ?)", (game_id, game_start_time, move_string))
+            c.execute("INSERT INTO moves (game_id, move) VALUES (?, ?)", (time_string, move_string))
 
         conn.commit()
         conn.close()
