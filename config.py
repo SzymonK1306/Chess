@@ -3,6 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import Qt, QRegExp
 import json
 import sqlite3
+from history import HistoryWindow
 from PyQt5.QtGui import QRegExpValidator, QIntValidator
 
 
@@ -74,7 +75,8 @@ class ConfigWindow(QDialog):
         self.port_edit.setInputMask("00000")
 
     def load_history(self):
-        pass
+        self.history_dialog = HistoryWindow(self.combo.currentText(), self)
+        self.history_dialog.exec()
 
     def load_from_json(self):
         with open('game_options.json') as f:
