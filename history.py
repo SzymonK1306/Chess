@@ -30,6 +30,12 @@ class HistoryWindow(QDialog):
 
         self.main_graphic.setScene(self.scene)
 
+        # Next button
+        self.next_button = self.findChild(QPushButton, 'next_button')
+        self.next_button.clicked.connect(self.make_move)
+
+        self.current_move = 0
+
     def load_sql(self):
         # load saved histories
         conn = sqlite3.connect('chess_game.db')
@@ -62,3 +68,13 @@ class HistoryWindow(QDialog):
 
         # print the move list
         print(move_list)
+
+    def make_move(self):
+        if self.current_move < len(self.list_of_moves):
+            self.scene.use_chess_notation(self.list_of_moves[self.current_move])
+            self.current_move += 1
+        else:
+            message_box = QMessageBox()
+            message_box.setWindowTitle('All saved moves done')
+            message_box.setText('Close history window and see all again')
+            message_box.exec()

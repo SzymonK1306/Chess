@@ -72,7 +72,6 @@ class ChessLogic:
         stop_row = str(8 - stopX)
 
         self.history_list.append(start_col + start_row + '-' + stop_col + stop_row)
-        print(self.history_list)
 
         # set castling flags
         if piece == 'K':

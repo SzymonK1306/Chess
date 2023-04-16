@@ -72,6 +72,92 @@ class Playback_Scene(QGraphicsScene):
         self.white_king_position = [(7, 4)]
         self.black_king_position = [(0, 4)]
 
+    def use_chess_notation(self, chess_notation_text):
+        active_piece = '-'
+
+        start_col = ord(chess_notation_text[0]) - ord('a')
+        start_row = 8 - int(chess_notation_text[1])
+
+        stop_col = ord(chess_notation_text[3]) - ord('a')
+        stop_row = 8 - int(chess_notation_text[4])
+
+        active_piece = self.chess_board.board_logic_array[start_row, start_col]
+
+        self.chess_board.move(start_row, start_col, stop_row, stop_col)
+        self.move_in_scene(start_row, start_col, stop_row, stop_col)
+
+        # possible_moves = self.chess_board.get_piece_moves(start_row, start_col)
+
+        # if (stop_row, stop_col) in possible_moves and active_piece == self.chess_board.board_logic_array[start_row, start_col]:
+        #     self.chess_board.move(start_row, start_col, stop_row, stop_col)
+        #     self.move_in_scene(start_row, start_col, stop_row, stop_col)
+        # else:
+        #     move_message_box = QMessageBox()
+        #     move_message_box.setWindowTitle("Incorrect move!")
+        #
+        #     move_message_box.setText("Move was incorrect. Try again")
+        #     move_message_box.setStandardButtons(QMessageBox.Ok)
+        #     move_message_box.exec()
+
+    def move_in_scene(self, start_row, start_col, stop_row, stop_col):
+        if self.activePlayer == 'black':
+            self.unhighlight_king(1)
+        elif self.activePlayer == 'white':
+            self.unhighlight_king(0)
+
+        # find captured
+        captured_item = [item for item in self.items(QPointF(stop_col * 100, stop_row * 100), 100, 100) if
+                         isinstance(item, Piece)]
+        if captured_item:
+            self.removeItem(captured_item[0])
+
+        # find moved piece
+        moved_piece = [item for item in self.items(QPointF(start_col * 100, start_row * 100), 100, 100) if
+                         isinstance(item, Piece)]
+        moved_piece[0].setPos(QPointF(stop_col *100, stop_row * 100))
+
+        # en passant on scene
+        if self.chess_board.was_en_passant:
+            if self.activePlayer == 'white':
+                en_passant_pawn = [item for item in
+                                   self.items(QPointF(stop_col * 100, stop_row * 100 + 100), 100, 100)
+                                   if isinstance(item, Piece)]
+                self.removeItem(en_passant_pawn[0])
+                self.chess_board.was_en_passant = False
+            elif self.activePlayer == 'black':
+                en_passant_pawn = [item for item in
+                                   self.items(QPointF(stop_col * 100, stop_row * 100 - 100), 100, 100)
+                                   if isinstance(item, Piece)]
+                self.removeItem(en_passant_pawn[0])
+                self.chess_board.was_en_passant = False
+
+        # checking promotion
+        if self.chess_board.board_logic_array[start_row, start_col] == 'P' or self.chess_board.board_logic_array[start_row, start_col] == 'p':
+            promotion_pos = []
+            if self.activePlayer == 'white':
+                promotion_pos = self.chess_board.white_promotion
+            elif self.activePlayer == 'black':
+                promotion_pos = self.chess_board.black_promotion
+            if len(promotion_pos) != 0:
+                self.pawn_promotion(promotion_pos, self.activePlayer)
+                self.chess_board.white_promotion = []
+                self.chess_board.black_promotion = []
+
+        # enemy in check
+        if self.activePlayer == 'black':
+            self.is_check, self.black_king_position = self.chess_board.is_check()
+            if self.is_check:
+                self.check_highlight(0)
+        elif self.activePlayer == 'white':
+            self.is_check, self.white_king_position = self.chess_board.is_check()
+            if self.is_check:
+                self.check_highlight(1)
+
+        if self.activePlayer == 'white':
+            self.activePlayer = 'white_clock'
+        elif self.activePlayer == 'black':
+            self.activePlayer = 'black_clock'
+
     def check_highlight(self, color):
         """
         Red highlight field with the king which is in check
