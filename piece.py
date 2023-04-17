@@ -157,6 +157,10 @@ class Piece(QGraphicsPixmapItem):
                             if self.scene().is_check:
                                 self.scene().check_highlight(1)
 
+                        # ip_move = str(int(self.drag_start_position.y()/100)) + str(int(self.drag_start_position.x()/100)) + str(int(new_pos.y()/100)) + str(int(new_pos.x()/100))
+                        # print(ip_move)
+                        # self.scene().parent().client.send_message(ip_move)
+
                         # change sites
                         if self.color == 'white':
                             self.scene().activePlayer = 'white_clock'

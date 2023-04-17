@@ -68,6 +68,7 @@ class Form(QtWidgets.QMainWindow):
         self.game_mode = None
         self.IP_address = None
         self.port = None
+        self.client = None
 
         self.config_dialog = ConfigWindow(self)
         self.config_dialog.exec()

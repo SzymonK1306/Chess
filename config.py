@@ -1,9 +1,11 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QRadioButton, QLineEdit, QMessageBox, QComboBox
 from PyQt5 import uic
+# from client import ChessClient
 from PyQt5.QtCore import Qt, QRegExp
 import json
 import sqlite3
 from history import HistoryWindow
+# from server import ChessServer
 from PyQt5.QtGui import QRegExpValidator, QIntValidator
 
 
@@ -36,12 +38,18 @@ class ConfigWindow(QDialog):
         self.load_button = self.findChild(QPushButton, 'load_options_button')
         self.load_button.clicked.connect(self.load_from_json)
 
+        self.load_button = self.findChild(QPushButton, 'start_server_button')
+        self.load_button.clicked.connect(self.create_server)
+
         # load history
         self.history_button = self.findChild(QPushButton, 'load_history_button')
         self.history_button.clicked.connect(self.load_history)
 
         # comboBox
         self.combo = self.findChild(QComboBox, 'comboBox')
+
+        # server
+        # self.server = CommunicatorServer()
 
         # load saved histories
         conn = sqlite3.connect('chess_game.db')
@@ -67,12 +75,17 @@ class ConfigWindow(QDialog):
         self.port_edit = self.findChild(QLineEdit, 'port_edit')
 
         # IP mask
-        self.IP_edit.setText("127.  0.  0.  1")
+        self.IP_edit.setText("127.0.0.1")
         self.IP_edit.setInputMask("000.000.000.000")
 
         # port mask
-        self.port_edit.setText("55555")
+        self.port_edit.setText("5555")
         self.port_edit.setInputMask("00000")
+
+    def create_server(self):
+        IP_address = self.IP_edit.text()
+        port = self.port_edit.text()
+        self.server.start_server(IP_address, port)
 
     def load_history(self):
         self.history_dialog = HistoryWindow(self.combo.currentText(), self)
@@ -128,6 +141,8 @@ class ConfigWindow(QDialog):
         self.parent().game_mode = selection
         self.parent().IP_address = self.IP_edit.text()
         self.parent().port = self.port_edit.text()
+        # if selection == 'Two players':
+        #     self.parent().client = CommunicatorClient(self.IP_edit.text(), int(self.port_edit.text()))
         # Close the dialog
         self.close()
 

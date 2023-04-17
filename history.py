@@ -69,6 +69,8 @@ class HistoryWindow(QDialog):
         # print the move list
         print(move_list)
 
+        return move_list
+
     def make_move(self):
         if self.current_move < len(self.list_of_moves):
             self.scene.use_chess_notation(self.list_of_moves[self.current_move])

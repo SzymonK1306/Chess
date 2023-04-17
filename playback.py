@@ -60,7 +60,7 @@ class Playback_Scene(QGraphicsScene):
         self.text_init()
 
         # This scene is only for visualisation
-        self.activePlayer = None
+        self.activePlayer = 'white'
 
         # create logic class object
         self.chess_board = ChessLogic()
@@ -130,6 +130,18 @@ class Playback_Scene(QGraphicsScene):
                                    if isinstance(item, Piece)]
                 self.removeItem(en_passant_pawn[0])
                 self.chess_board.was_en_passant = False
+        # castling
+        self.made_castling()
+        if self.activePlayer == 'white':
+            if self.chess_board.white_right_castling_available:
+                self.chess_board.white_right_castling_available = False
+            if self.chess_board.white_left_castling_available:
+                self.chess_board.white_left_castling_available = False
+        else:
+            if self.chess_board.black_right_castling_available:
+                self.chess_board.black_right_castling_available = False
+            if self.chess_board.black_left_castling_available:
+                self.chess_board.black_left_castling_available = False
 
         # checking promotion
         if self.chess_board.board_logic_array[start_row, start_col] == 'P' or self.chess_board.board_logic_array[start_row, start_col] == 'p':
@@ -154,9 +166,36 @@ class Playback_Scene(QGraphicsScene):
                 self.check_highlight(1)
 
         if self.activePlayer == 'white':
-            self.activePlayer = 'white_clock'
+            self.activePlayer = 'black'
         elif self.activePlayer == 'black':
-            self.activePlayer = 'black_clock'
+            self.activePlayer = 'white'
+
+    def made_castling(self):
+        if self.activePlayer == 'white':
+            if self.chess_board.white_right_castling_done:
+                castling_rook = [item for item in self.items(QPointF(700, 700), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(500, 700))
+                self.chess_board.white_right_castling_done = False
+
+            if self.chess_board.white_left_castling_done:
+                castling_rook = [item for item in self.items(QPointF(0, 700), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(300, 700))
+                self.chess_board.white_left_castling_done = False
+
+        else:
+            if self.chess_board.black_right_castling_done:
+                castling_rook = [item for item in self.items(QPointF(700, 0), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(500, 0))
+                self.chess_board.black_right_castling_done = False
+
+            if self.chess_board.black_left_castling_done:
+                castling_rook = [item for item in self.items(QPointF(0, 0), 100, 100) if
+                                 isinstance(item, Piece)]
+                castling_rook[0].setPos(QPointF(300, 0))
+                self.chess_board.black_left_castling_done = False
 
     def check_highlight(self, color):
         """

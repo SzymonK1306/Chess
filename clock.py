@@ -123,6 +123,8 @@ class Clock(QGraphicsScene):
                 self.parent.white_clock_scene.timer.start(1)
                 self.parent.white_clock_scene.setBackgroundBrush(QBrush(self.active_color))
                 self.parent.scene.set_game_state('white')
+                # move = self.parent
+                # self.parent.client.send_message()
 
         # Call the base class method to handle other mouse events
         super().mousePressEvent(event)
