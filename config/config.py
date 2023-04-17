@@ -4,7 +4,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import Qt, QRegExp
 import json
 import sqlite3
-from history import HistoryWindow
+from history.history import HistoryWindow
 # from server import ChessServer
 from PyQt5.QtGui import QRegExpValidator, QIntValidator
 
@@ -13,7 +13,7 @@ class ConfigWindow(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        uic.loadUi('config.ui', self)
+        uic.loadUi('config/config.ui', self)
 
         # disable close button
         self.setWindowFlag(Qt.WindowCloseButtonHint, False)
@@ -52,7 +52,7 @@ class ConfigWindow(QDialog):
         # self.server = CommunicatorServer()
 
         # load saved histories
-        conn = sqlite3.connect('chess_game.db')
+        conn = sqlite3.connect('history/chess_game.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT DISTINCT game_id FROM moves")
@@ -92,7 +92,7 @@ class ConfigWindow(QDialog):
         self.history_dialog.exec()
 
     def load_from_json(self):
-        with open('game_options.json') as f:
+        with open('config/game_options.json') as f:
             options = json.load(f)
 
         game_type = options['game_type']
@@ -125,7 +125,7 @@ class ConfigWindow(QDialog):
             'port': int(port)
         }
 
-        with open('game_options.json', 'w') as f:
+        with open('config/game_options.json', 'w') as f:
             json_string = json.dumps(options)
             f.write(json_string)
 

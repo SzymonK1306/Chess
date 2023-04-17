@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import QApplication, QPushButton, QLineEdit, QGraphicsView,
 from PyQt5.QtCore import QRegExp
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QRegExpValidator
-from chess_scene import Chess_Scene
-from clock import Clock
-from config import ConfigWindow
+from game.chess_scene import Chess_Scene
+from game.clock import Clock
+from config.config import ConfigWindow
 import sqlite3
 import uuid
 import time
@@ -91,7 +91,7 @@ class Form(QtWidgets.QMainWindow):
         xml_action_save.triggered.connect(self.xml_save)
 
     def sql_save(self):
-        conn = sqlite3.connect('chess_game.db')
+        conn = sqlite3.connect('history/chess_game.db')
         c = conn.cursor()
 
         c.execute('''CREATE TABLE IF NOT EXISTS moves 
@@ -130,7 +130,7 @@ class Form(QtWidgets.QMainWindow):
         dom = minidom.parseString(xml_str)
         pretty_xml_str = dom.toprettyxml(indent='  ')
 
-        with open('chess_game.xml', 'w') as f:
+        with open('history/chess_game.xml', 'w') as f:
             f.write(pretty_xml_str)
 
         message_box = QMessageBox()

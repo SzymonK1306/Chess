@@ -2,14 +2,14 @@ import sqlite3
 import xml.etree.ElementTree as ET
 from PyQt5.QtWidgets import QDialog, QPushButton, QRadioButton, QLineEdit, QMessageBox, QComboBox, QGraphicsView
 from PyQt5 import uic
-from playback import Playback_Scene
+from history.playback import Playback_Scene
 
 
 class HistoryWindow(QDialog):
     def __init__(self, game_title, parent=None):
         super().__init__(parent)
 
-        uic.loadUi('history.ui', self)
+        uic.loadUi('history/history.ui', self)
 
         self.game_title = game_title
 
@@ -38,7 +38,7 @@ class HistoryWindow(QDialog):
 
     def load_sql(self):
         # load saved histories
-        conn = sqlite3.connect('chess_game.db')
+        conn = sqlite3.connect('history/chess_game.db')
         cursor = conn.cursor()
 
         cursor.execute("SELECT move FROM moves WHERE game_id = (?)", (self.game_title,))
@@ -57,7 +57,7 @@ class HistoryWindow(QDialog):
 
     def load_xml(self):
         # read the XML file into a string
-        with open('chess_game.xml', 'r') as f:
+        with open('history/chess_game.xml', 'r') as f:
             xml_str = f.read()
 
         # parse the XML string into an ElementTree object

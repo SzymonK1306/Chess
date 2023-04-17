@@ -1,6 +1,5 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QTransform
-from piece import Piece
 from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 

@@ -1,23 +1,35 @@
-## Program składa się z plików
-- main.py - plik z klasą okna głównego
-- chess_scene.py - plik z klasą sceny, na której rozgrywana jest partia (dziedziczenie po QGraphicsScene)
-- piece.py - plik z klasą pojedynczej bierki (dziedziczenie po QGraphicsPixmapItem)
-- piece.py - plik z klasą pola szachowego (dziedziczenie po QGraphicsPixmapItem)
-- clock.py - plik z klasą zegara szachowego (dziedziczenie po QGraphicsScene)
-- logic.py - plik z klasą logiki szachowej, plansza jako numpy array
-- promotion.py - plik z klasą okna dialogowego przy promocji piona
+# Chess game ♔
+Chess app with all the rules (including castling, en passant, pawn promotion) 
+and animated clocks. There are options to save history to database or xml
+file. Currently working on artificial intelligence and online mode.
 
-## Przyjęte założenia
-- Po wciśnięciu prawego przycisku myszy jest możliwość zmiany grafiki figur i pól
-- Bierkę należy przeciągnąć w podświetlone pole
-- Po wykonaniu ruchu należy kliknąć w zegar
-- W polu tekstowym można wykonać ruch wpisując długą notację szachową, np. "Ka2-a3" - ruch króla, "a2-a4" - ruch piona
-- Szach sygnalizowany jest czerwonym podświetleniem szachowanego króla
-- W przypadku mata pojawia się odpowiedni komunikat, gra się nie zamyka, ale żaden ruch nie jest możliwy do wykonania
-- Wszystkie grafiki zaciągnięto z pliku .rc
-- W przypadku promocji piona pojawia się okno wyboru figury
-- Zaaplikowano bicie w przelocie, roszadę
-- Niemożliwe jest wykonanie zabronionych ruchów, w przypadku takiej próby bierka wraca na swoje miejsce
-- W ruchy zabronione wliczane są te, które powodują odsłonięcie króla
+## Board 
+There is the board with all pieces and clock for each player.
 
-Wykonano wszystkie punkty zadania, zatem moim zdaniem na 15 punktów
+![Board image](screenshots/screen1.png)
+
+## Rules
+When user press the piece, all legal moves are highlighted in green. 
+Checked king is highlighted in red.
+
+![Check image](screenshots/highlight.png)
+
+## Config
+In the configuration window, the user can select the type of game, enter the IP address and port.
+All options can be saved to a json file.
+
+![Config image](screenshots/config.png)
+
+## History
+
+User can also save game history to SQLite3 database or XML file. There is an option
+to playback all saved games.
+
+![History image](screenshots/history.png)
+
+## Future assumptions
+
+- Create online mode
+- Create bot
+
+

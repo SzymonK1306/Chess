@@ -1,13 +1,10 @@
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsPixmapItem, QMenu, QAction, QGraphicsTextItem, QDialog, QMessageBox
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QColor
 from PyQt5.QtCore import Qt, pyqtSignal, QPointF
-from piece import Piece
-from logic import ChessLogic
-from field import Field
-from promotion import PromotionDialog
-import data_rc
-import numpy as np
-
+from game.piece import Piece
+from game.logic import ChessLogic
+from game.field import Field
+import game.data_rc
 
 # main class scene
 class Playback_Scene(QGraphicsScene):
