@@ -35,14 +35,27 @@ class Piece(QGraphicsPixmapItem):
         :param event:
         :return:
         """
-        if self.color == self.scene().activePlayer:     # checking color
+        self.drag_start_position = event.scenePos()
+        piece_x = self.drag_start_position.x() // 100
+        piece_y = self.drag_start_position.y() // 100
+        self.drag_start_position = QPointF(piece_x * 100, piece_y * 100)
+
+        # Online configuration
+        # Permission for move
+        self.permission = False
+        if self.color == 'white' and self.scene().white_permission:
+            self.permission = True
+        elif self.color == 'black' and self.scene().black_permission:
+            self.permission = True
+
+        if (self.color == self.scene().activePlayer) and self.permission:     # checking color
             if event.button() == Qt.LeftButton:
                 # cosmetic
                 self.setOpacity(0.5)
                 self.setCursor(QCursor(Qt.ClosedHandCursor))
                 self.drag_start_position = event.scenePos()
 
-                # save start position
+                # save start position ???
                 piece_x = self.drag_start_position.x()//100
                 piece_y = self.drag_start_position.y() // 100
                 self.drag_start_position = QPointF(piece_x * 100, piece_y * 100)
@@ -54,7 +67,7 @@ class Piece(QGraphicsPixmapItem):
                 super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if self.color == self.scene().activePlayer:     # checking color
+        if (self.color == self.scene().activePlayer) and self.permission:     # checking color
             super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
@@ -157,9 +170,12 @@ class Piece(QGraphicsPixmapItem):
                             if self.scene().is_check:
                                 self.scene().check_highlight(1)
 
-                        # ip_move = str(int(self.drag_start_position.y()/100)) + str(int(self.drag_start_position.x()/100)) + str(int(new_pos.y()/100)) + str(int(new_pos.x()/100))
-                        # print(ip_move)
-                        # self.scene().parent().client.send_message(ip_move)
+                        # save IP move
+                        # self.scene().ip_move = str(int(self.drag_start_position.x()/100)) + str(int(self.drag_start_position.y()/100)) + str(int(new_pos.x()/100)) + str(int(new_pos.y()/100))
+                        # My notation
+                        self.scene().ip_move = f'{int(self.drag_start_position.y()/100)}{int(self.drag_start_position.x()/100)}{int(new_pos.y()/100)}{int(new_pos.x()/100)}'
+                        print(self.scene().ip_move)
+                        # self.scene().parent().client.sendData(self.scene().ip_move)
 
                         # change sites
                         if self.color == 'white':

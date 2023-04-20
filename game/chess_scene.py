@@ -81,6 +81,10 @@ class Chess_Scene(QGraphicsScene):
         self.white_clock = self.window.white_clock_scene
         self.black_clock = self.window.black_clock_scene
 
+        # permission
+        self.white_permission = True
+        self.black_permission = True
+
     def contextMenuEvent(self, event):
         """
         RPM menu to change graphics

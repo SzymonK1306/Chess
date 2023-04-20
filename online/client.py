@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QObject, QDataStream
 from PyQt5.QtNetwork import QTcpSocket, QHostAddress
 
-from server import ServerThread
+from online.server import ServerThread
 
 
 class ChessClient(QObject):
@@ -40,16 +40,70 @@ class ChessClient(QObject):
         stream = QDataStream(self.socket)
         stream.setVersion(QDataStream.Qt_5_0)
 
+        # read message
         while self.socket.bytesAvailable() > 0:
             data = stream.readQString()
             print(f"Received: {data}.")
 
+            # set nick
             if data.startswith("set_nick:"):
-                player_nick = data.split(':')[1]
-                print(f"Your side: {player_nick}.")
+                self.player_nick = data.split(':')[1]
+                if self.player_nick == 'dark':
+                    self.player_nick = 'black'
+                if self.player_nick == 'light':
+                    self.player_nick = 'white'
+
+                # permission for player
+                if self.player_nick == 'black':
+                    self.parent().scene.white_permission = False
+                elif self.player_nick == 'white':
+                    self.parent().scene.black_permission = False
+                print(f"Your side: {self.player_nick}.")
+
+            # Time synchronise
+            elif data.startswith("time:"):
+                time = map(int, data.split(":")[1:])
+                if self.player_nick == 'white':
+                    self.parent().scene.black_clock.timer.stop()
+                    self.parent().scene.black_clock.setTime(time)
+                if self.player_nick == 'black':
+                    self.parent().scene.white_clock.timer.stop()
+                    self.parent().scene.white_clock.setTime(time)
+
+            # full server
             elif data == "server_full":
                 self.socket.disconnectFromHost()
                 print("The server is full!. Cannot join the game...")
+
+            # start of the game
+            elif data == 'start':
+                pass
+
+            # make move
+            else:
+
+                # Tomash's notation
+                # start_col = int(data[0])
+                # start_row = int(data[1])
+                # stop_col = int(data[2])
+                # stop_row = int(data[3])
+                # My notation
+
+                start_row = int(data[0])
+                start_col = int(data[1])
+                stop_row = int(data[2])
+                stop_col = int(data[3])
+
+                # send informations to functions
+                self.parent().scene.chess_board.move(start_row, start_col, stop_row, stop_col)
+                self.parent().scene.move_in_scene(start_row, start_col, stop_row, stop_col)
+
+                # stop clock
+                if self.player_nick == 'white':
+                    self.parent().black_clock_scene.stop_black()
+                else:
+                    self.parent().white_clock_scene.stop_white()
+
 
     def sendData(self, data):
         stream = QDataStream(self.socket)

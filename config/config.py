@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QRadioButton, QLineEdit, QMessageBox, QComboBox
 from PyQt5 import uic
-# from client import ChessClient
+from online.client import ChessClient
 from PyQt5.QtCore import Qt, QRegExp
 import json
 import sqlite3
@@ -23,7 +23,7 @@ class ConfigWindow(QDialog):
         self.radio_button_two = self.findChild(QRadioButton, 'radioButton_two')
         self.radio_button_ai = self.findChild(QRadioButton, 'radioButton_ai')
 
-        self.radio_button_single.setChecked(True)
+        self.radio_button_two.setChecked(True)
 
         # PushButtons
         # start
@@ -79,7 +79,7 @@ class ConfigWindow(QDialog):
         self.IP_edit.setInputMask("000.000.000.000")
 
         # port mask
-        self.port_edit.setText("5555")
+        self.port_edit.setText("5000")
         self.port_edit.setInputMask("00000")
 
     def create_server(self):
@@ -141,8 +141,10 @@ class ConfigWindow(QDialog):
         self.parent().game_mode = selection
         self.parent().IP_address = self.IP_edit.text()
         self.parent().port = self.port_edit.text()
-        # if selection == 'Two players':
-        #     self.parent().client = CommunicatorClient(self.IP_edit.text(), int(self.port_edit.text()))
+
+        # connect to server
+        if selection == 'Two players':
+            self.parent().client = ChessClient(self.IP_edit.text(), int(self.port_edit.text()), self.parent())
         # Close the dialog
         self.close()
 

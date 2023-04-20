@@ -12,7 +12,7 @@ class Clock(QGraphicsScene):
         self.color = color
         self.parent = parent
         self.setSceneRect(0, 0, 300, 300)
-        self.gameTime = QTime(0, 10, 0)
+        self.gameTime = QTime(0, 10, 0, 0)
 
         self.active_color = QColor(72, 242, 5)
         self.sleep_color = QColor(207, 242, 194)
@@ -103,31 +103,100 @@ class Clock(QGraphicsScene):
 
             self.parent.close()
 
-    def mousePressEvent(self, event):
-        if self.color == 'white':
-            if self.parent.scene.get_game_state() == 'white_clock':
-                # Stop the timer when the scene is clicked
-                self.timer.stop()
-                self.setBackgroundBrush(QBrush(self.sleep_color))
+    def setTime(self, time):
+        """
+        Set time on clock (using usually in IP)
+        :param time: map(hours, minutes, seconds, msec)
+        :return:
+        """
+        self.gameTime = QTime(*time)
+        seconds = self.gameTime.second() + self.gameTime.msec() / 1000.0
+        self.secondHand.setRotation(-seconds * 6.0)
+        self.minuteHand.setRotation(-self.gameTime.minute() * 6.0 + - seconds / 10.0)
+        self.millisecondHand.setRotation(-self.gameTime.msec() * 0.36)
 
-                # start another clock
-                self.parent.black_clock_scene.timer.start(1)
-                self.parent.black_clock_scene.setBackgroundBrush(QBrush(self.active_color))
-                self.parent.scene.set_game_state('black')
-        if self.color == 'black':
-            if self.parent.scene.get_game_state() == 'black_clock':
-                # Stop the timer when the scene is clicked
-                self.timer.stop()
-                self.setBackgroundBrush(QBrush(self.sleep_color))
-                # start another clock
-                self.parent.white_clock_scene.timer.start(1)
-                self.parent.white_clock_scene.setBackgroundBrush(QBrush(self.active_color))
-                self.parent.scene.set_game_state('white')
-                # move = self.parent
-                # self.parent.client.send_message()
+    def mousePressEvent(self, event):
+        if self.parent.game_mode == 'Single player':
+            if self.color == 'white':
+                if self.parent.scene.get_game_state() == 'white_clock':
+                    # Stop the timer when the scene is clicked
+                    self.timer.stop()
+                    self.setBackgroundBrush(QBrush(self.sleep_color))
+
+                    # start another clock
+                    self.parent.black_clock_scene.timer.start(1)
+                    self.parent.black_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+                    self.parent.scene.set_game_state('black')
+            if self.color == 'black':
+                if self.parent.scene.get_game_state() == 'black_clock':
+                    # Stop the timer when the scene is clicked
+                    self.timer.stop()
+                    self.setBackgroundBrush(QBrush(self.sleep_color))
+                    # start another clock
+                    self.parent.white_clock_scene.timer.start(1)
+                    self.parent.white_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+                    self.parent.scene.set_game_state('white')
+                    # move = self.parent
+                    # self.parent.client.send_message()
+        # two players mode
+        if self.parent.game_mode == 'Two players':
+            if self.parent.client.player_nick == self.color:
+                if self.color == 'white':
+                    if self.parent.scene.get_game_state() == 'white_clock':
+                        # Stop the timer when the scene is clicked
+                        self.timer.stop()
+                        self.setBackgroundBrush(QBrush(self.sleep_color))
+
+                        # start another clock
+                        self.parent.black_clock_scene.timer.start(1)
+                        self.parent.black_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+                        self.parent.scene.set_game_state('black')
+
+                        # send move
+                        self.parent.client.sendData(self.parent.scene.ip_move)
+
+                        # send time
+                        self.parent.client.sendData(self.create_time_str())
+                if self.color == 'black':
+                    if self.parent.scene.get_game_state() == 'black_clock':
+                        # Stop the timer when the scene is clicked
+                        self.timer.stop()
+                        self.setBackgroundBrush(QBrush(self.sleep_color))
+                        # start another clock
+                        self.parent.white_clock_scene.timer.start(1)
+                        self.parent.white_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+                        self.parent.scene.set_game_state('white')
+
+                        # send move
+                        self.parent.client.sendData(self.parent.scene.ip_move)
+
+                        # send time
+                        self.parent.client.sendData(self.create_time_str())
 
         # Call the base class method to handle other mouse events
         super().mousePressEvent(event)
+
+    def create_time_str(self):
+        return f'time:{self.gameTime.hour()}:{self.gameTime.minute()}:{self.gameTime.second()}:{self.gameTime.msec()}'
+
+    def stop_black(self):
+        # Stop the timer when the scene is clicked
+        self.timer.stop()
+        self.setBackgroundBrush(QBrush(self.sleep_color))
+        # start another clock
+        self.parent.white_clock_scene.timer.start(1)
+        self.parent.white_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+        self.parent.scene.set_game_state('white')
+
+    def stop_white(self):
+        # Stop the timer when the scene is clicked
+        self.timer.stop()
+        self.setBackgroundBrush(QBrush(self.sleep_color))
+
+        # start another clock
+        self.parent.black_clock_scene.timer.start(1)
+        self.parent.black_clock_scene.setBackgroundBrush(QBrush(self.active_color))
+        self.parent.scene.set_game_state('black')
 
     def draw_face(self, i):
         line = QGraphicsLineItem(0, -120, 0, -125)

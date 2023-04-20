@@ -33,14 +33,22 @@ class ChessServer(QObject):
 
         playerInd = 0 if self.playerSocket[0] is None else 1
 
+        # Initialize new socket
         newSocket = self.server.nextPendingConnection()
         newSocket.readyRead.connect(lambda: self.receiveData(playerInd))
         newSocket.disconnected.connect(lambda: self.playerDisconnected(playerInd))
 
+        # Refresh info about players (sockets and nicknames)
         self.playerSocket[playerInd] = newSocket
         playerNick = 'light' if playerInd == 0 else 'dark'
         self.playerNick[playerInd] = playerNick
+        self.sendData(playerInd, f"set_nick:{playerNick}")
         print(f"Player ({playerNick}) joined the game!")
+
+        # Check if two players are connected
+        if None not in self.playerSocket:
+            self.sendData(playerInd, "start")
+            self.sendData(1 - playerInd, "start")
 
     def playerDisconnected(self, playerInd):
         print(f"Player ({self.playerNick[playerInd]}) is disconnected...")
