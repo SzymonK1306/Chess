@@ -144,6 +144,8 @@ class ChessLogic:
                 message_box.setText("Checkmate! Game over. " + color_text + ' wins')
                 message_box.exec()
 
+        print(self.board_logic_array)
+
 
     def get_piece_moves(self, row, col):
         """

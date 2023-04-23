@@ -77,22 +77,23 @@ class ChessClient(QObject):
 
             # start of the game
             elif data == 'start':
-                pass
+                self.parent().white_clock_scene.timer.start(1)
+                self.parent().scene.activePlayer = 'white'
 
             # make move
             else:
 
                 # Tomash's notation
-                # start_col = int(data[0])
-                # start_row = int(data[1])
-                # stop_col = int(data[2])
-                # stop_row = int(data[3])
+                start_col = int(data[0])
+                start_row = int(data[1])
+                stop_col = int(data[2])
+                stop_row = int(data[3])
                 # My notation
 
-                start_row = int(data[0])
-                start_col = int(data[1])
-                stop_row = int(data[2])
-                stop_col = int(data[3])
+                # start_row = int(data[0])
+                # start_col = int(data[1])
+                # stop_row = int(data[2])
+                # stop_col = int(data[3])
 
                 # send informations to functions
                 self.parent().scene.chess_board.move(start_row, start_col, stop_row, stop_col)

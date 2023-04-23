@@ -64,7 +64,7 @@ class Chess_Scene(QGraphicsScene):
         self.text_init()
 
         # white play first
-        self.activePlayer = 'white'
+        self.activePlayer = 'wait for start'
 
         # create logic class object
         self.chess_board = ChessLogic()
@@ -84,6 +84,11 @@ class Chess_Scene(QGraphicsScene):
         # permission
         self.white_permission = True
         self.black_permission = True
+
+        if self.parent().game_mode != 'Two players':
+            self.parent().white_clock_scene.timer.start(1)
+            # white play first
+            self.activePlayer = 'white'
 
     def contextMenuEvent(self, event):
         """
@@ -323,8 +328,36 @@ class Chess_Scene(QGraphicsScene):
                 self.removeItem(en_passant_pawn[0])
                 self.chess_board.was_en_passant = False
 
+        # castling
+        if self.chess_board.board_logic_array[stop_row, stop_col] == 'k' or self.chess_board.board_logic_array[stop_row, stop_col] == 'K':
+            if (start_col - stop_col) == 2:
+                self.chess_board.castling_check(stop_col)
+                if self.activePlayer == 'white':
+                    castling_rook = [item for item in self.items(QPointF(0, 700), 100, 100) if
+                                     isinstance(item, Piece)]
+                    castling_rook[0].setPos(QPointF(300, 700))
+                    self.chess_board.white_left_castling_done = False
+                elif self.activePlayer == 'black':
+                    castling_rook = [item for item in self.items(QPointF(0, 0), 100, 100) if
+                                     isinstance(item, Piece)]
+                    castling_rook[0].setPos(QPointF(300, 0))
+                    self.chess_board.black_left_castling_done = False
+            elif (start_col - stop_col) == -2:
+                self.chess_board.castling_check(stop_col)
+                if self.activePlayer == 'white':
+                    castling_rook = [item for item in self.items(QPointF(700, 700), 100, 100) if
+                                     isinstance(item, Piece)]
+                    castling_rook[0].setPos(QPointF(500, 700))
+                    self.chess_board.white_right_castling_done = False
+                elif self.activePlayer == 'black':
+                    castling_rook = [item for item in self.items(QPointF(700, 0), 100, 100) if
+                                     isinstance(item, Piece)]
+                    castling_rook[0].setPos(QPointF(500, 0))
+                    self.chess_board.black_right_castling_done = False
+
+
         # checking promotion
-        if self.chess_board.board_logic_array[start_row, start_col] == 'P' or self.chess_board.board_logic_array[start_row, start_col] == 'p':
+        if self.chess_board.board_logic_array[stop_row, stop_col] == 'P' or self.chess_board.board_logic_array[stop_row, stop_col] == 'p':
             promotion_pos = []
             if self.activePlayer == 'white':
                 promotion_pos = self.chess_board.white_promotion

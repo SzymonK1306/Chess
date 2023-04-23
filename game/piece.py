@@ -171,9 +171,9 @@ class Piece(QGraphicsPixmapItem):
                                 self.scene().check_highlight(1)
 
                         # save IP move
-                        # self.scene().ip_move = str(int(self.drag_start_position.x()/100)) + str(int(self.drag_start_position.y()/100)) + str(int(new_pos.x()/100)) + str(int(new_pos.y()/100))
+                        self.scene().ip_move = str(int(self.drag_start_position.x()/100)) + str(int(self.drag_start_position.y()/100)) + str(int(new_pos.x()/100)) + str(int(new_pos.y()/100))
                         # My notation
-                        self.scene().ip_move = f'{int(self.drag_start_position.y()/100)}{int(self.drag_start_position.x()/100)}{int(new_pos.y()/100)}{int(new_pos.x()/100)}'
+                        # self.scene().ip_move = f'{int(self.drag_start_position.y()/100)}{int(self.drag_start_position.x()/100)}{int(new_pos.y()/100)}{int(new_pos.x()/100)}'
                         print(self.scene().ip_move)
                         # self.scene().parent().client.sendData(self.scene().ip_move)
 

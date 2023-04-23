@@ -41,28 +41,12 @@ class Form(QtWidgets.QMainWindow):
 
         self.chess_notation_button.clicked.connect(self.chess_notation)
 
+        # Clocks
         self.white_clock_scene = Clock('white', self)
         self.black_clock_scene = Clock('black', self)
 
         self.white_clock_view.setScene(self.white_clock_scene)
         self.black_clock_view.setScene(self.black_clock_scene)
-        # self.title_label = self.findChild(QLabel, 'title_label')
-        # RC file
-        # QResource.registerResource("images/data.qrc")
-
-        # create the icon object
-        icon = QIcon("images/red_king.png")
-
-        # set the application icon
-        QApplication.setWindowIcon(icon)
-
-        # scene creation
-        self.scene = Chess_Scene(self)
-
-        # initial board state
-        self.scene.init_board()
-
-        self.main_graphic.setScene(self.scene)
 
         # game config dialog
         self.game_mode = None
@@ -89,6 +73,24 @@ class Form(QtWidgets.QMainWindow):
         # Connect the triggered signal of each QAction to its respective function
         sql_action_save.triggered.connect(self.sql_save)
         xml_action_save.triggered.connect(self.xml_save)
+
+        # self.title_label = self.findChild(QLabel, 'title_label')
+        # RC file
+        # QResource.registerResource("images/data.qrc")
+
+        # create the icon object
+        icon = QIcon("images/red_king.png")
+
+        # set the application icon
+        QApplication.setWindowIcon(icon)
+
+        # scene creation
+        self.scene = Chess_Scene(self)
+
+        # initial board state
+        self.scene.init_board()
+
+        self.main_graphic.setScene(self.scene)
 
     def sql_save(self):
         conn = sqlite3.connect('history/chess_game.db')

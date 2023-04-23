@@ -72,8 +72,8 @@ class Clock(QGraphicsScene):
         self.timer = QTimer(self)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateClock)
-        if self.color == 'white':
-            self.timer.start(1)
+        # if self.color == 'white' and self.parent.game_mode != 'Two players':
+        #     self.timer.start(1)
 
         # set initial time on clock face
         self.secondHand.setRotation(-self.gameTime.second() * 6.0)
